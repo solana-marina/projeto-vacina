@@ -1,0 +1,5 @@
+pytest>=9.0,<10
+pytest-django>=4.11,<5
+pytest-cov>=7,<8
+factory_boy>=3.3,<4
+Faker>=40,<41

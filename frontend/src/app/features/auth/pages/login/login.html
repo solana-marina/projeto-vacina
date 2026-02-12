@@ -1,0 +1,49 @@
+<div class="login-shell">
+  <div class="hero">
+    <div class="hero-copy">
+      <h1>Vacina Escola</h1>
+      <p>
+        Plataforma de gestao vacinal para equipes escolares e saude.
+        Faca login para acompanhar cobertura, pendencias e busca ativa.
+      </p>
+      <ul>
+        <li>Registro nominal de estudantes e doses</li>
+        <li>Status vacinal com regras automatizadas</li>
+        <li>Dashboards e exportacao operacional</li>
+      </ul>
+    </div>
+
+    <mat-card class="login-card">
+      <h2>Entrar no sistema</h2>
+      <p class="muted">Use uma conta de demonstracao ou usuario cadastrado.</p>
+
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <mat-form-field appearance="outline" class="w100">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" data-testid="login-email" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w100">
+          <mat-label>Senha</mat-label>
+          <input matInput type="password" formControlName="password" data-testid="login-password" />
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" class="w100" [disabled]="loading" data-testid="login-submit">
+          {{ loading ? 'Entrando...' : 'Entrar' }}
+        </button>
+      </form>
+
+      <div class="tips">
+        <strong>Contas demo:</strong>
+        <div>admin@vacina.local / Admin@123</div>
+        <div>operador.escola@vacina.local / Escola@123</div>
+        <div>saude@vacina.local / Saude@123</div>
+      </div>
+    </mat-card>
+  </div>
+
+  <div class="footer-note">
+    <span>Ambiente de prototipo para testes funcionais.</span>
+    <span>Swagger: http://127.0.0.1:8000/api/docs/</span>
+  </div>
+</div>

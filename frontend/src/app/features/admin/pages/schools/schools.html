@@ -1,0 +1,82 @@
+<div class="app-page">
+  <div class="page-header">
+    <h2>Admin | Escolas</h2>
+    <p>Cadastro e manutencao das escolas vinculadas ao territorio.</p>
+  </div>
+
+  <div class="nav-links">
+    <a mat-stroked-button color="primary" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      Escolas
+    </a>
+    <a mat-stroked-button color="primary" routerLink="/admin/users" routerLinkActive="active">Usuarios</a>
+    <a mat-stroked-button color="primary" routerLink="/admin/schedule" routerLinkActive="active">Calendario vacinal</a>
+  </div>
+
+  <div class="kpi-grid">
+    <article class="kpi-item kpi-brand">
+      <h4>Escolas cadastradas</h4>
+      <p>{{ schools.length }}</p>
+    </article>
+  </div>
+
+  <mat-card class="card-surface table-card">
+    <div class="card-header">
+      <h3 class="section-title">Lista de escolas</h3>
+      <button mat-raised-button color="primary" (click)="openCreateModal()">Nova escola</button>
+    </div>
+    <table mat-table [dataSource]="schools" class="schools-table">
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Nome</th>
+        <td mat-cell *matCellDef="let row">{{ row.name }}</td>
+      </ng-container>
+      <ng-container matColumnDef="inep_code">
+        <th mat-header-cell *matHeaderCellDef>INEP</th>
+        <td mat-cell *matCellDef="let row">{{ row.inep_code || '-' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="territory_ref">
+        <th mat-header-cell *matHeaderCellDef>Territorio</th>
+        <td mat-cell *matCellDef="let row">{{ row.territory_ref || '-' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Acoes</th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-stroked-button color="primary" (click)="edit(row)">Editar</button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['name','inep_code','territory_ref','actions']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['name','inep_code','territory_ref','actions']"></tr>
+    </table>
+  </mat-card>
+</div>
+
+<ng-template #schoolFormDialog>
+  <h2 mat-dialog-title>{{ editingId ? 'Editar escola' : 'Nova escola' }}</h2>
+  <mat-dialog-content>
+    <form [formGroup]="form" class="form-grid modal-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Nome</mat-label>
+        <input matInput formControlName="name" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>INEP</mat-label>
+        <input matInput formControlName="inep_code" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Endereco</mat-label>
+        <input matInput formControlName="address" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Territorio</mat-label>
+        <input matInput formControlName="territory_ref" />
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end" class="dialog-actions">
+    <button mat-stroked-button type="button" (click)="closeDialog()">Cancelar</button>
+    <button mat-raised-button color="primary" type="button" (click)="save()">Salvar</button>
+  </mat-dialog-actions>
+</ng-template>

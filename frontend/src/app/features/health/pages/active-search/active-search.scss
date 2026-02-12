@@ -1,0 +1,26 @@
+.buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.loading {
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+
+.results-table {
+  width: 100%;
+}
+
+.empty-state {
+  margin-top: 10px;
+  border: 1px dashed rgba(84, 110, 122, 0.42);
+  background: rgba(84, 110, 122, 0.1);
+  border-radius: 12px;
+  padding: 16px;
+  color: #455a64;
+  text-align: center;
+}

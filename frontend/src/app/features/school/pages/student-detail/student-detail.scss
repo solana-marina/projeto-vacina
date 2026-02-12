@@ -1,0 +1,41 @@
+.grid-2 {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #1c3f69;
+}
+
+.meta-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: #335072;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.modal-form {
+  padding-top: 4px;
+}
+
+.loading {
+  margin-top: 12px;
+  display: grid;
+  place-items: center;
+}
+
+.action-row {
+  margin-top: 10px;
+}
