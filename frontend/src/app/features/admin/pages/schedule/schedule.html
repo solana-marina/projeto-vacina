@@ -1,51 +1,83 @@
-<div class="app-page">
+﻿<div class="app-page">
   <div class="page-header">
-    <h2>Admin | Calendario Vacinal</h2>
-    <p>Criar/ativar versoes e manter regras por dose/faixa etaria.</p>
+    <h2>Admin | Calendário Vacinal HPV</h2>
+    <p>Criar/ativar versões e manter regras por dose/faixa etária.</p>
   </div>
 
   <div class="nav-links">
-    <a mat-stroked-button color="primary" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+    <a
+      mat-stroked-button
+      color="primary"
+      routerLink="/admin"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      data-testid="admin-nav-schools"
+    >
       Escolas
     </a>
-    <a mat-stroked-button color="primary" routerLink="/admin/users" routerLinkActive="active">Usuarios</a>
-    <a mat-stroked-button color="primary" routerLink="/admin/schedule" routerLinkActive="active">Calendario vacinal</a>
+    <a mat-stroked-button color="primary" routerLink="/admin/users" routerLinkActive="active" data-testid="admin-nav-users">Usuários</a>
+    <a
+      mat-stroked-button
+      color="primary"
+      routerLink="/admin/schedule"
+      routerLinkActive="active"
+      data-testid="admin-nav-schedule"
+    >
+      Calendário vacinal HPV
+    </a>
   </div>
 
   <div class="kpi-grid">
     <article class="kpi-item kpi-brand">
-      <h4>Versoes cadastradas</h4>
+      <h4>Versões cadastradas</h4>
       <p>{{ schedules.length }}</p>
     </article>
     <article class="kpi-item kpi-success">
-      <h4>Versao ativa</h4>
+      <h4>Versão ativa</h4>
       <p>{{ getActiveSchedulesCount() }}</p>
     </article>
     <article class="kpi-item kpi-neutral">
-      <h4>Regras da selecao</h4>
+      <h4>Regras da seleção</h4>
       <p>{{ rules.length }}</p>
     </article>
     <article class="kpi-item kpi-warning">
-      <h4>Vacinas no catalogo</h4>
+      <h4>Vacinas no catálogo</h4>
       <p>{{ vaccines.length }}</p>
     </article>
   </div>
 
   <mat-card class="card-surface table-card">
     <div class="card-header">
-      <h3 class="section-title">Versoes existentes</h3>
+      <h3 class="section-title">Versões existentes</h3>
       <div class="header-actions">
-        <button mat-raised-button color="primary" type="button" (click)="openScheduleModal()">Nova versao</button>
-        <button mat-raised-button color="accent" type="button" (click)="openRuleModal()" [disabled]="!selectedScheduleId">
+        <button mat-raised-button color="primary" type="button" (click)="openScheduleModal()" data-testid="admin-schedule-open-create">
+          Nova versão
+        </button>
+        <button
+          mat-raised-button
+          color="accent"
+          type="button"
+          (click)="openRuleModal()"
+          [disabled]="!selectedScheduleId"
+          data-testid="admin-rule-open-create"
+        >
           Nova regra
         </button>
-        <button mat-stroked-button color="primary" type="button" (click)="openCreateVaccineModal()">Adicionar nova vacina</button>
+        <button
+          mat-stroked-button
+          color="primary"
+          type="button"
+          (click)="openCreateVaccineModal()"
+          data-testid="admin-vaccine-open-create"
+        >
+          Adicionar nova vacina
+        </button>
       </div>
     </div>
 
     <table mat-table [dataSource]="schedules" class="schedule-table">
       <ng-container matColumnDef="code">
-        <th mat-header-cell *matHeaderCellDef>Codigo</th>
+        <th mat-header-cell *matHeaderCellDef>Código</th>
         <td mat-cell *matCellDef="let row">{{ row.code }}</td>
       </ng-container>
 
@@ -64,7 +96,7 @@
       </ng-container>
 
       <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>Acoes</th>
+        <th mat-header-cell *matHeaderCellDef>Ações</th>
         <td mat-cell *matCellDef="let row" class="action-cell">
           <button mat-stroked-button color="primary" (click)="loadRules(row.id)">Regras</button>
           <button mat-raised-button color="primary" (click)="activate(row)" [disabled]="row.is_active">Ativar</button>
@@ -78,12 +110,14 @@
 
   <mat-card class="table-card card-surface">
     <div class="card-header">
-      <h3 class="section-title">Catalogo de vacinas</h3>
-      <button mat-raised-button color="primary" type="button" (click)="openCreateVaccineModal()">Nova vacina</button>
+      <h3 class="section-title">Catálogo de vacinas</h3>
+      <button mat-raised-button color="primary" type="button" (click)="openCreateVaccineModal()" data-testid="admin-vaccine-open-create-secondary">
+        Nova vacina
+      </button>
     </div>
     <table mat-table [dataSource]="vaccines" class="schedule-table">
       <ng-container matColumnDef="code">
-        <th mat-header-cell *matHeaderCellDef>Codigo</th>
+        <th mat-header-cell *matHeaderCellDef>Código</th>
         <td mat-cell *matCellDef="let row">{{ row.code }}</td>
       </ng-container>
 
@@ -93,7 +127,7 @@
       </ng-container>
 
       <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>Acoes</th>
+        <th mat-header-cell *matHeaderCellDef>Ações</th>
         <td mat-cell *matCellDef="let row" class="action-cell">
           <button mat-stroked-button color="primary" (click)="openEditVaccineModal(row)">Editar</button>
           <button mat-stroked-button color="warn" (click)="deleteVaccine(row)">Excluir</button>
@@ -106,7 +140,7 @@
   </mat-card>
 
   <mat-card class="table-card card-surface">
-    <h3 class="section-title">Regras da versao selecionada ({{ selectedScheduleId || '-' }})</h3>
+    <h3 class="section-title">Regras da versão selecionada ({{ selectedScheduleId || '-' }})</h3>
     <table mat-table [dataSource]="rules" class="schedule-table">
       <ng-container matColumnDef="vaccine_name">
         <th mat-header-cell *matHeaderCellDef>Vacina</th>
@@ -130,23 +164,23 @@
 </div>
 
 <ng-template #scheduleFormDialog>
-  <h2 mat-dialog-title>Nova versao de calendario</h2>
+  <h2 mat-dialog-title>Nova versão de calendário</h2>
   <mat-dialog-content>
     <form [formGroup]="scheduleForm" class="form-grid modal-form">
       <mat-form-field appearance="outline">
-        <mat-label>Codigo</mat-label>
-        <input matInput formControlName="code" />
+        <mat-label>Código</mat-label>
+        <input matInput formControlName="code" data-testid="admin-schedule-code" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Nome</mat-label>
-        <input matInput formControlName="name" />
+        <input matInput formControlName="name" data-testid="admin-schedule-name" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Ativo</mat-label>
         <mat-select formControlName="is_active">
-          <mat-option [value]="false">Nao</mat-option>
+          <mat-option [value]="false">Não</mat-option>
           <mat-option [value]="true">Sim</mat-option>
         </mat-select>
       </mat-form-field>
@@ -154,12 +188,12 @@
   </mat-dialog-content>
   <mat-dialog-actions align="end" class="dialog-actions">
     <button mat-stroked-button type="button" (click)="closeScheduleDialog()">Cancelar</button>
-    <button mat-raised-button color="primary" type="button" (click)="saveSchedule()">Salvar</button>
+    <button mat-raised-button color="primary" type="button" (click)="saveSchedule()" data-testid="admin-schedule-save">Salvar</button>
   </mat-dialog-actions>
 </ng-template>
 
 <ng-template #ruleFormDialog>
-  <h2 mat-dialog-title>Nova regra (versao {{ selectedScheduleId || '-' }})</h2>
+  <h2 mat-dialog-title>Nova regra (versão {{ selectedScheduleId || '-' }})</h2>
   <mat-dialog-content>
     <form [formGroup]="ruleForm" class="form-grid modal-form">
       <div class="rule-vaccine-header">
@@ -171,30 +205,30 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Vacina</mat-label>
-        <mat-select formControlName="vaccine">
+        <mat-select formControlName="vaccine" data-testid="admin-rule-vaccine">
           <mat-option *ngFor="let vaccine of vaccines" [value]="vaccine.id">{{ vaccine.code }} - {{ vaccine.name }}</mat-option>
         </mat-select>
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Dose</mat-label>
-        <input matInput type="number" formControlName="dose_number" />
+        <input matInput type="number" formControlName="dose_number" data-testid="admin-rule-dose-number" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>Idade min (meses)</mat-label>
-        <input matInput type="number" formControlName="recommended_min_age_months" />
+        <mat-label>Idade mín. (meses)</mat-label>
+        <input matInput type="number" formControlName="recommended_min_age_months" data-testid="admin-rule-min-age" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>Idade max (meses)</mat-label>
-        <input matInput type="number" formControlName="recommended_max_age_months" />
+        <mat-label>Idade máx. (meses)</mat-label>
+        <input matInput type="number" formControlName="recommended_max_age_months" data-testid="admin-rule-max-age" />
       </mat-form-field>
     </form>
   </mat-dialog-content>
   <mat-dialog-actions align="end" class="dialog-actions">
     <button mat-stroked-button type="button" (click)="closeRuleDialog()">Cancelar</button>
-    <button mat-raised-button color="primary" type="button" (click)="saveRule()">Salvar</button>
+    <button mat-raised-button color="primary" type="button" (click)="saveRule()" data-testid="admin-rule-save">Salvar</button>
   </mat-dialog-actions>
 </ng-template>
 
@@ -203,18 +237,18 @@
   <mat-dialog-content>
     <form [formGroup]="vaccineForm" class="form-grid modal-form">
       <mat-form-field appearance="outline">
-        <mat-label>Codigo</mat-label>
-        <input matInput formControlName="code" />
+        <mat-label>Código</mat-label>
+        <input matInput formControlName="code" data-testid="admin-vaccine-code" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Nome</mat-label>
-        <input matInput formControlName="name" />
+        <input matInput formControlName="name" data-testid="admin-vaccine-name" />
       </mat-form-field>
     </form>
   </mat-dialog-content>
   <mat-dialog-actions align="end" class="dialog-actions">
     <button mat-stroked-button type="button" (click)="closeVaccineDialog()">Cancelar</button>
-    <button mat-raised-button color="primary" type="button" (click)="saveVaccine()">Salvar</button>
+    <button mat-raised-button color="primary" type="button" (click)="saveVaccine()" data-testid="admin-vaccine-save">Salvar</button>
   </mat-dialog-actions>
 </ng-template>

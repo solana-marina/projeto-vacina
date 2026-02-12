@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
+﻿import { Component, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -191,7 +191,7 @@ export class Schedule implements OnInit {
     };
 
     if (!payload.code || !payload.name) {
-      this.snackbar.open('Preencha codigo e nome da vacina.', 'Fechar', { duration: 3000 });
+      this.snackbar.open('Preencha código e nome da vacina.', 'Fechar', { duration: 3000 });
       return;
     }
 
@@ -223,7 +223,7 @@ export class Schedule implements OnInit {
       next: () => this.loadVaccines(),
       error: () => {
         this.snackbar.open(
-          'Nao foi possivel excluir. Verifique se a vacina esta vinculada a alguma regra/registro.',
+          'Não foi possível excluir. Verifique se a vacina está vinculada a alguma regra/registro.',
           'Fechar',
           { duration: 5000 },
         );

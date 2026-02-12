@@ -1,20 +1,35 @@
-<div class="app-page">
+﻿<div class="app-page">
   <div class="page-header">
-    <h2>Admin | Usuarios</h2>
-    <p>Gestao de perfis, papeis e vinculacao por escola.</p>
+    <h2>Admin | Usuários</h2>
+    <p>Gestão de perfis, papéis e vinculação por escola.</p>
   </div>
 
   <div class="nav-links">
-    <a mat-stroked-button color="primary" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+    <a
+      mat-stroked-button
+      color="primary"
+      routerLink="/admin"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      data-testid="admin-nav-schools"
+    >
       Escolas
     </a>
-    <a mat-stroked-button color="primary" routerLink="/admin/users" routerLinkActive="active">Usuarios</a>
-    <a mat-stroked-button color="primary" routerLink="/admin/schedule" routerLinkActive="active">Calendario vacinal</a>
+    <a mat-stroked-button color="primary" routerLink="/admin/users" routerLinkActive="active" data-testid="admin-nav-users">Usuários</a>
+    <a
+      mat-stroked-button
+      color="primary"
+      routerLink="/admin/schedule"
+      routerLinkActive="active"
+      data-testid="admin-nav-schedule"
+    >
+      Calendário vacinal HPV
+    </a>
   </div>
 
   <div class="kpi-grid">
     <article class="kpi-item kpi-brand">
-      <h4>Usuarios cadastrados</h4>
+      <h4>Usuários cadastrados</h4>
       <p>{{ users.length }}</p>
     </article>
     <article class="kpi-item kpi-success">
@@ -33,8 +48,8 @@
 
   <mat-card class="card-surface table-card">
     <div class="card-header">
-      <h3 class="section-title">Lista de usuarios</h3>
-      <button mat-raised-button color="primary" (click)="openCreateModal()">Novo usuario</button>
+      <h3 class="section-title">Lista de usuários</h3>
+      <button mat-raised-button color="primary" (click)="openCreateModal()" data-testid="admin-user-open-create">Novo usuário</button>
     </div>
     <table mat-table [dataSource]="users" class="users-table">
       <ng-container matColumnDef="email">
@@ -64,7 +79,7 @@
       </ng-container>
 
       <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>Acoes</th>
+        <th mat-header-cell *matHeaderCellDef>Ações</th>
         <td mat-cell *matCellDef="let row">
           <button mat-stroked-button color="primary" (click)="edit(row)">Editar</button>
         </td>
@@ -77,35 +92,35 @@
 </div>
 
 <ng-template #userFormDialog>
-  <h2 mat-dialog-title>{{ editingId ? 'Editar usuario' : 'Novo usuario' }}</h2>
+  <h2 mat-dialog-title>{{ editingId ? 'Editar usuário' : 'Novo usuário' }}</h2>
   <mat-dialog-content>
     <form [formGroup]="form" class="form-grid modal-form">
       <mat-form-field appearance="outline">
         <mat-label>Email</mat-label>
-        <input matInput formControlName="email" />
+        <input matInput formControlName="email" data-testid="admin-user-email" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>Senha (somente criacao)</mat-label>
+        <mat-label>Senha (somente criação)</mat-label>
         <input matInput type="password" formControlName="password" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Nome</mat-label>
-        <input matInput formControlName="full_name" />
+        <input matInput formControlName="full_name" data-testid="admin-user-full-name" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Perfil</mat-label>
-        <mat-select formControlName="role">
+        <mat-select formControlName="role" data-testid="admin-user-role">
           <mat-option *ngFor="let role of roles" [value]="role">{{ getRoleLabel(role) }}</mat-option>
         </mat-select>
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Escola</mat-label>
-        <mat-select formControlName="school">
-          <mat-option [value]="0">Nao vinculado</mat-option>
+        <mat-select formControlName="school" data-testid="admin-user-school">
+          <mat-option [value]="0">Não vinculado</mat-option>
           <mat-option *ngFor="let school of schools" [value]="school.id">{{ school.name }}</mat-option>
         </mat-select>
       </mat-form-field>
@@ -113,6 +128,6 @@
   </mat-dialog-content>
   <mat-dialog-actions align="end" class="dialog-actions">
     <button mat-stroked-button type="button" (click)="closeDialog()">Cancelar</button>
-    <button mat-raised-button color="primary" type="button" (click)="save()">Salvar</button>
+    <button mat-raised-button color="primary" type="button" (click)="save()" data-testid="admin-user-save">Salvar</button>
   </mat-dialog-actions>
 </ng-template>

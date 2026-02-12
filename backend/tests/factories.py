@@ -30,6 +30,8 @@ class UserFactory(factory.django.DjangoModelFactory):
     def password(self, create, extracted, **kwargs):
         raw_password = extracted or 'Senha@123'
         self.set_password(raw_password)
+        if create:
+            self.save(update_fields=['password'])
 
 
 class StudentFactory(factory.django.DjangoModelFactory):

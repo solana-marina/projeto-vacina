@@ -27,7 +27,7 @@ describe('AuthService', () => {
   it('stores session after login', () => {
     service.login('admin@vacina.local', 'Admin@123').subscribe();
 
-    const req = httpMock.expectOne('http://localhost:8000/api/auth/token/');
+    const req = httpMock.expectOne('/api/auth/token/');
     expect(req.request.method).toBe('POST');
     req.flush({
       access: 'a-token',
@@ -41,5 +41,29 @@ describe('AuthService', () => {
 
     expect(service.isAuthenticated()).toBeTrue();
     expect(service.getCurrentSession()?.role).toBe('ADMIN');
+  });
+
+  it('supports role checks and logout', () => {
+    service.login('admin@vacina.local', 'Admin@123').subscribe();
+
+    const req = httpMock.expectOne('/api/auth/token/');
+    req.flush({
+      access: 'a-token',
+      refresh: 'r-token',
+      role: 'ADMIN',
+      full_name: 'Admin',
+      email: 'admin@vacina.local',
+      school_id: null,
+      user_id: 1,
+    });
+
+    expect(service.hasAnyRole(['ADMIN'])).toBeTrue();
+    expect(service.hasAnyRole(['HEALTH_PRO'])).toBeFalse();
+    expect(service.getAccessToken()).toBe('a-token');
+
+    service.logout();
+
+    expect(service.isAuthenticated()).toBeFalse();
+    expect(service.getCurrentSession()).toBeNull();
   });
 });

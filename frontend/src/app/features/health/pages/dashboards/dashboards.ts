@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { ChartConfiguration } from 'chart.js';
 import { forkJoin } from 'rxjs';
 
@@ -43,7 +43,7 @@ export class Dashboards implements OnInit {
           labels: ageDistribution.items.map((item) => item.ageBucket),
           datasets: [
             {
-              label: 'Pendencias',
+              label: 'Pendências',
               data: ageDistribution.items.map((item) => item.pendingCount),
               backgroundColor: '#2a9d8f',
             },

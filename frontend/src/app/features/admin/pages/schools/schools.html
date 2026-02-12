@@ -1,15 +1,30 @@
-<div class="app-page">
+﻿<div class="app-page">
   <div class="page-header">
     <h2>Admin | Escolas</h2>
-    <p>Cadastro e manutencao das escolas vinculadas ao territorio.</p>
+    <p>Cadastro e manutenção das escolas vinculadas ao território.</p>
   </div>
 
   <div class="nav-links">
-    <a mat-stroked-button color="primary" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+    <a
+      mat-stroked-button
+      color="primary"
+      routerLink="/admin"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      data-testid="admin-nav-schools"
+    >
       Escolas
     </a>
-    <a mat-stroked-button color="primary" routerLink="/admin/users" routerLinkActive="active">Usuarios</a>
-    <a mat-stroked-button color="primary" routerLink="/admin/schedule" routerLinkActive="active">Calendario vacinal</a>
+    <a mat-stroked-button color="primary" routerLink="/admin/users" routerLinkActive="active" data-testid="admin-nav-users">Usuários</a>
+    <a
+      mat-stroked-button
+      color="primary"
+      routerLink="/admin/schedule"
+      routerLinkActive="active"
+      data-testid="admin-nav-schedule"
+    >
+      Calendário vacinal HPV
+    </a>
   </div>
 
   <div class="kpi-grid">
@@ -22,7 +37,7 @@
   <mat-card class="card-surface table-card">
     <div class="card-header">
       <h3 class="section-title">Lista de escolas</h3>
-      <button mat-raised-button color="primary" (click)="openCreateModal()">Nova escola</button>
+      <button mat-raised-button color="primary" (click)="openCreateModal()" data-testid="admin-school-open-create">Nova escola</button>
     </div>
     <table mat-table [dataSource]="schools" class="schools-table">
       <ng-container matColumnDef="name">
@@ -34,11 +49,11 @@
         <td mat-cell *matCellDef="let row">{{ row.inep_code || '-' }}</td>
       </ng-container>
       <ng-container matColumnDef="territory_ref">
-        <th mat-header-cell *matHeaderCellDef>Territorio</th>
+        <th mat-header-cell *matHeaderCellDef>Território</th>
         <td mat-cell *matCellDef="let row">{{ row.territory_ref || '-' }}</td>
       </ng-container>
       <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>Acoes</th>
+        <th mat-header-cell *matHeaderCellDef>Ações</th>
         <td mat-cell *matCellDef="let row">
           <button mat-stroked-button color="primary" (click)="edit(row)">Editar</button>
         </td>
@@ -56,7 +71,7 @@
     <form [formGroup]="form" class="form-grid modal-form">
       <mat-form-field appearance="outline">
         <mat-label>Nome</mat-label>
-        <input matInput formControlName="name" />
+        <input matInput formControlName="name" data-testid="admin-school-name" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
@@ -65,18 +80,18 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>Endereco</mat-label>
+        <mat-label>Endereço</mat-label>
         <input matInput formControlName="address" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>Territorio</mat-label>
+        <mat-label>Território</mat-label>
         <input matInput formControlName="territory_ref" />
       </mat-form-field>
     </form>
   </mat-dialog-content>
   <mat-dialog-actions align="end" class="dialog-actions">
     <button mat-stroked-button type="button" (click)="closeDialog()">Cancelar</button>
-    <button mat-raised-button color="primary" type="button" (click)="save()">Salvar</button>
+    <button mat-raised-button color="primary" type="button" (click)="save()" data-testid="admin-school-save">Salvar</button>
   </mat-dialog-actions>
 </ng-template>

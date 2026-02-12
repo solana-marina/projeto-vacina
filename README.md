@@ -1,30 +1,27 @@
-﻿# Sistema Web de Carteira de Vacinação Escolar
+﻿# Projeto de Vacinação Contra o HPV
 
-## Visão do Projeto
-Este repositório contém um protótipo funcional de sistema web para gestão da carteira de vacinação de estudantes, com foco na operação integrada entre escolas, equipes de saúde e administração pública.
+## Visão Geral
+Este repositório apresenta um protótipo funcional para gestão da vacinação contra o HPV de estudantes, com operação integrada entre escolas, equipes de saúde e gestão pública.
 
-Objetivo institucional: disponibilizar uma ferramenta aderente ao patamar de maturidade digital nível 3, com vistas à submissão em edital do CNPq, apresentando evidências de governança mínima, segurança, uso operacional e apoio à tomada de decisão.
+O projeto foi estruturado para evidenciar características de uma solução de maturidade digital nível 3, com processos padronizados, uso operacional de dados nominais, governança mínima e apoio à decisão.
 
-## Problema que o Projeto Enfrenta
-- Dificuldade de consolidar a situação vacinal de estudantes por escola e território.
-- Baixa rastreabilidade de pendências vacinais e da busca ativa nominal.
-- Ausência de padronização de regras de calendário vacinal por versão.
-- Dependência de processos manuais e baixa visibilidade para gestores e decisores.
+## Problema Público Endereçado
+- Fragmentação do acompanhamento da vacinação contra o HPV por escola e território.
+- Dificuldade de identificar estudantes com atraso, incompletude ou ausência de dados vacinais.
+- Baixa capacidade de busca ativa nominal orientada por critérios objetivos.
+- Falta de rastreabilidade de alterações críticas em calendário e registros vacinais.
 
 ## Escopo Funcional Entregue
 ### Operação Escolar
 - Cadastro e manutenção de estudantes.
-- Registro nominal de vacinação (sem importação de planilhas).
-- Cálculo automático da situação vacinal por idade e regras do calendário.
-- Visualização de pendências e atrasos.
+- Registro nominal de doses aplicadas (sem importação de planilhas).
+- Cálculo automático de situação vacinal por idade e regras do calendário ativo.
+- Acompanhamento de pendências e atrasos por estudante.
 
 ### Operação da Saúde
 - Busca ativa nominal com filtros por nome, escola, faixa etária e status.
-- Dashboards consolidados:
-  - cobertura por escola;
-  - ranking por atraso e ausência de dados;
-  - distribuição por faixa etária.
-- Exportação CSV para apoio operacional.
+- Dashboards consolidados de cobertura e atraso.
+- Exportação CSV para organização de ações de campo.
 
 ### Administração
 - CRUD de escolas.
@@ -33,7 +30,7 @@ Objetivo institucional: disponibilizar uma ferramenta aderente ao patamar de mat
 - Gestão de versões do calendário vacinal.
 - Gestão de regras por dose e faixa etária.
 
-## Perfis e Diferenças de Acesso (RBAC)
+## Perfis e Escopos de Acesso (RBAC)
 | Perfil | Escopo de acesso | Principais permissões |
 |---|---|---|
 | ADMIN | Global | Gerencia usuários, escolas, vacinas, calendário e visão total do sistema |
@@ -46,102 +43,75 @@ Segregação implementada:
 - Usuários escolares não acessam dados de outras escolas.
 - Perfis de saúde e administração acessam dados consolidados conforme permissão.
 
-## Fluxos Operacionais por Perfil
-### 1. Fluxo ADMIN
-1. Autentica-se no sistema.
-2. Cadastra e atualiza escolas.
-3. Cadastra e atualiza usuários e perfis.
-4. Cadastra vacinas no catálogo.
-5. Cria versão de calendário e ativa a versão vigente.
-6. Cadastra regras por vacina, dose e faixa etária.
-7. Monitora adesão por dashboards e exportações.
+## Fluxos por Perfil
+### ADMIN
+1. Cadastra escolas e usuários.
+2. Mantém catálogo de vacinas.
+3. Cria e ativa versão de calendário vacinal HPV.
+4. Define regras por vacina, dose e faixa etária.
+5. Monitora consolidados para gestão.
 
-### 2. Fluxo SCHOOL_OPERATOR
-1. Autentica-se no sistema.
-2. Cadastra estudante da própria escola.
-3. Registra doses aplicadas.
-4. Consulta status vacinal do estudante.
-5. Atua na lista de pendências (pendente/atrasada).
+### SCHOOL_OPERATOR
+1. Cadastra estudante da própria escola.
+2. Registra doses aplicadas.
+3. Consulta situação vacinal e pendências.
+4. Atua nos casos atrasados e sem dados.
 
-### 3. Fluxo SCHOOL_MANAGER
-1. Executa os mesmos passos do operador escolar.
-2. Acompanha a carteira vacinal da escola com foco gerencial.
-3. Prioriza estudantes com atraso e ausência de dados para ação interna.
+### SCHOOL_MANAGER
+1. Executa o fluxo escolar completo.
+2. Prioriza estudantes em atraso para ação interna.
 
-### 4. Fluxo HEALTH_PRO
-1. Autentica-se no sistema.
-2. Executa busca ativa nominal com filtros territoriais.
-3. Analisa dashboards de cobertura e atraso.
-4. Exporta CSV de pendências para operação de campo.
+### HEALTH_PRO
+1. Executa busca ativa nominal.
+2. Analisa dashboards de cobertura e atraso.
+3. Exporta CSV para planejamento operacional.
 
-### 5. Fluxo HEALTH_MANAGER
-1. Executa os mesmos passos do profissional de saúde.
-2. Usa os consolidados para priorização territorial e acompanhamento de resultados.
-
-## Arquitetura da Solução
-### Backend
-- Python 3.11+, Django, DRF e SimpleJWT.
-- Apps: `accounts`, `core`, `immunization`, `analytics_app`, `audit`.
-- OpenAPI: drf-spectacular.
-
-### Frontend
-- Angular 20 modular, com lazy loading por feature.
-- Guards por autenticação e perfil.
-- Interceptors para JWT e tratamento padronizado de erro.
-
-### Dados e Infraestrutura
-- PostgreSQL em Docker Compose.
-- Seed de demonstração com usuários, escolas, estudantes, vacinas e calendário.
+### HEALTH_MANAGER
+1. Executa as mesmas ações do HEALTH_PRO.
+2. Consolida indicadores para priorização territorial.
 
 ## Enquadramento em Maturidade Digital Nível 3
-
-| Critério de nível 3 | Evidência no sistema |
+| Critério típico de nível 3 | Evidência no sistema |
 |---|---|
-| Uso operacional ativo nas unidades | Escola registra estudantes e vacinas diretamente no sistema |
-| Processos e regras estruturadas | Calendário vacinal versionado com regras por dose/faixa etária |
-| Apoio à decisão com dados | Dashboards de cobertura, ranking de atraso e distribuição etária |
-| Gestão nominal da população-alvo | Busca ativa nominal e filtros multiescola |
-| Governança mínima implementada | RBAC, segregação por escola e trilha de auditoria |
-| Capacidade de ação operacional | Exportação CSV de pendências para rotina de campo |
+| Processos críticos digitalizados e operacionais | Registro nominal de estudantes e vacinação diretamente no sistema |
+| Regras padronizadas e aplicadas de forma consistente | Calendário vacinal versionado com regras por dose/faixa etária |
+| Uso de dados para gestão e decisão | Dashboards de cobertura, atraso e distribuição de pendências |
+| Governança mínima de acesso e rastreabilidade | JWT, RBAC, segregação por escola e trilha de auditoria |
+| Capacidade de execução orientada por dados | Busca ativa nominal e exportação CSV para operação |
 
-### Diferença para Níveis Superiores (4 e 5)
-Para evolução futura (nível 4+), recomendam-se:
-- maior integração externa (ex.: e-SUS e demais sistemas oficiais);
-- maior padronização e interoperabilidade em larga escala;
-- observabilidade avançada e governança ampliada de dados;
-- automação mais extensa de fluxos e monitoramento em tempo real.
-
-## Segurança, Governança e Conformidade
+## Segurança e Governança
 ### Segurança de Acesso
 - Autenticação por JWT.
 - Controle de autorização por perfil (RBAC).
 - Segregação por escola para perfis escolares.
 
-### Governança de Dados
-- Rastreabilidade de alterações com `created_by`, `updated_by`, `created_at`, `updated_at`.
-- `AuditLog` para eventos críticos (estudante, registro vacinal e calendário).
-- API documentada (OpenAPI/Swagger), favorecendo transparência técnica.
+### Governança e Auditoria
+- Campos de rastreabilidade: `created_by`, `updated_by`, `created_at`, `updated_at`.
+- `AuditLog` para eventos críticos (estudantes, registros vacinais, calendário).
+- Documentação OpenAPI/Swagger para transparência técnica.
 
-### Privacidade e LGPD (escopo do protótipo)
-- Coleta orientada à minimização de dados para a finalidade vacinal.
-- Controle de acesso por necessidade de uso (perfil e escola).
+### Privacidade e LGPD (escopo protótipo)
+- Coleta orientada à minimização de dados para finalidade de vacinação contra o HPV.
+- Acesso restrito por necessidade de uso (perfil + vínculo de escola).
 - Diretrizes resumidas em `docs/lgpd.md`.
 
-## Qualidade e Evidências Técnicas
-- Suíte de testes automatizados:
-  - backend (pytest + cobertura);
-  - frontend unitário;
-  - e2e (fluxo principal).
-- Casos críticos cobertos:
-  - motor de regras de imunização;
-  - permissões e segregação entre escolas;
-  - dashboards e exportação.
+## Arquitetura Resumida
+- Backend: Python, Django, DRF, SimpleJWT, PostgreSQL.
+- Frontend: Angular modular com lazy loading, guards e interceptors.
+- Infra: Docker Compose para banco PostgreSQL.
+- Seed de demonstração com perfis, escolas, estudantes, vacinas e calendário.
 
-## Documentação do Repositório
-- `docs/arquitetura.md`: arquitetura, módulos e fluxos de alto nível.
-- `docs/api.md`: autenticação e contratos dos endpoints.
-- `docs/lgpd.md`: princípios de privacidade, minimização e controle de acesso.
-- `docs/testing.md`: estratégia, padrões e execução de testes.
+## Qualidade Técnica
+- Backend com testes automatizados e cobertura.
+- Frontend com testes unitários.
+- E2E cobrindo fluxo principal de ponta a ponta.
+- Estratégia e execução em `docs/testing.md`.
+
+## Documentação
+- `docs/arquitetura.md`: módulos, componentes e fluxos.
+- `docs/api.md`: autenticação e endpoints.
+- `docs/lgpd.md`: finalidade, minimização e controles.
+- `docs/testing.md`: estratégia e execução de testes.
 
 ## Credenciais de Demonstração
 - ADMIN: `admin@vacina.local / Admin@123`
@@ -153,5 +123,5 @@ Para evolução futura (nível 4+), recomendam-se:
 ## Backlog Estratégico (fora do escopo atual)
 - Integrações externas (e-SUS e afins).
 - Notificações avançadas (SMS, WhatsApp, push).
-- Observabilidade completa (tracing e métricas avançadas).
+- Observabilidade avançada (tracing, métricas e alertas).
 - Importação de planilhas/CSV.

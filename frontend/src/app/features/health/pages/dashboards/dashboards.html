@@ -1,7 +1,7 @@
-<div class="app-page">
+﻿<div class="app-page">
   <div class="page-header">
     <h2>Dashboards</h2>
-    <p>Indicadores consolidados, ranking de atraso e distribuicao por faixa etaria.</p>
+    <p>Indicadores consolidados de cobertura HPV, ranking de atraso e distribuição por faixa etária.</p>
   </div>
 
   <div class="nav-links">
@@ -15,15 +15,15 @@
 
   <div *ngIf="!loading" class="kpi-grid">
     <article class="kpi-item kpi-success">
-      <h4>Cobertura media</h4>
+      <h4>Cobertura média</h4>
       <p>{{ getCoverageAverage() | number:'1.0-1' }}%</p>
     </article>
     <article class="kpi-item kpi-danger">
-      <h4>Atraso medio</h4>
+      <h4>Atraso médio</h4>
       <p>{{ getDelayAverage() | number:'1.0-1' }}%</p>
     </article>
     <article class="kpi-item kpi-neutral">
-      <h4>Sem dados medio</h4>
+      <h4>Sem dados médio</h4>
       <p>{{ getNoDataAverage() | number:'1.0-1' }}%</p>
     </article>
     <article class="kpi-item kpi-brand">
@@ -71,7 +71,7 @@
   </div>
 
   <mat-card *ngIf="!loading" class="table-card card-surface chart-card">
-    <h3>Distribuicao de pendencias por faixa etaria</h3>
+    <h3>Distribuição de pendências por faixa etária</h3>
     <canvas baseChart [data]="barChartData" [type]="'bar'"></canvas>
   </mat-card>
 </div>

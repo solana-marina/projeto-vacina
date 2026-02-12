@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
+﻿import { Component, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -149,7 +149,7 @@ export class StudentDetail implements OnInit {
   }
 
   sourceLabel(source: VaccinationRecord['source']): string {
-    return source === 'CONFIRMADO_SAUDE' ? 'Confirmado saude' : 'Informado escola';
+    return source === 'CONFIRMADO_SAUDE' ? 'Confirmado saúde' : 'Informado escola';
   }
 
   private openVaccinationDialog(): void {

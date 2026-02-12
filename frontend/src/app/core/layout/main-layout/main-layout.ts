@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+﻿import { Component, OnDestroy } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { Subject, filter, takeUntil } from 'rxjs';
 
@@ -32,7 +32,7 @@ export class MainLayout implements OnDestroy {
       roles: ['SCHOOL_OPERATOR', 'SCHOOL_MANAGER'],
     },
     {
-      label: 'Saude',
+      label: 'Saúde',
       icon: 'vaccines',
       path: '/health',
       roles: ['HEALTH_PRO', 'HEALTH_MANAGER'],
@@ -49,8 +49,8 @@ export class MainLayout implements OnDestroy {
     ADMIN: 'Administrador',
     SCHOOL_OPERATOR: 'Operador Escolar',
     SCHOOL_MANAGER: 'Gestor Escolar',
-    HEALTH_PRO: 'Profissional de Saude',
-    HEALTH_MANAGER: 'Gestor de Saude',
+    HEALTH_PRO: 'Profissional de Saúde',
+    HEALTH_MANAGER: 'Gestor de Saúde',
   };
 
   constructor(

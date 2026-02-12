@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -24,7 +24,7 @@ export class ErrorInterceptor implements HttpInterceptor {
 
         const message =
           (error.error && (error.error.detail || error.error.message || JSON.stringify(error.error))) ||
-          'Falha ao processar solicitacao.';
+          'Falha ao processar solicitação.';
 
         this.snackBar.open(message, 'Fechar', {
           duration: 4500,

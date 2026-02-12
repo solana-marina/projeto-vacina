@@ -1,12 +1,12 @@
-<div class="app-page">
+﻿<div class="app-page">
   <div class="page-header">
     <h2>Estudantes</h2>
-    <p>Cadastro, filtros e acompanhamento da situacao vacinal.</p>
+    <p>Cadastro, filtros e acompanhamento da situação vacinal contra o HPV.</p>
   </div>
 
   <div class="kpi-grid summary-grid">
     <div class="kpi-item kpi-brand">
-      <h4>Listados na pagina</h4>
+      <h4>Listados na página</h4>
       <p>{{ students.length }}</p>
     </div>
     <div class="kpi-item kpi-success">
@@ -43,7 +43,7 @@
 
       <div class="action-row">
         <button mat-raised-button color="primary" (click)="applyFilters()" data-testid="students-filter-submit">Filtrar</button>
-        <a mat-stroked-button color="accent" routerLink="/school/pending">Ver pendencias</a>
+        <a mat-stroked-button color="accent" routerLink="/school/pending" data-testid="school-go-pending">Ver pendências</a>
       </div>
     </div>
   </mat-card>
@@ -76,7 +76,7 @@
       </ng-container>
 
       <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>Acoes</th>
+        <th mat-header-cell *matHeaderCellDef>Ações</th>
         <td mat-cell *matCellDef="let row">
           <button mat-flat-button color="primary" (click)="openDetail(row)">Detalhe</button>
           <button mat-button (click)="edit(row)">Editar</button>
@@ -111,7 +111,7 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>Responsavel</mat-label>
+        <mat-label>Responsável</mat-label>
         <input matInput formControlName="guardian_name" />
       </mat-form-field>
 

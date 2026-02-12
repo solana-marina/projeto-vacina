@@ -1,38 +1,42 @@
-﻿# LGPD (Versão Simplificada para Protótipo)
+﻿# LGPD no Projeto de Vacinação Contra o HPV (Resumo)
 
 ## Finalidade
-Tratamento de dados para monitoramento da situação vacinal de estudantes e apoio a ações de busca ativa em saúde.
+Tratamento de dados pessoais para monitoramento da vacinação contra o HPV de estudantes e apoio à busca ativa nominal em saúde.
 
-## Base e minimização
-- Coleta restrita ao necessário para o fluxo operacional:
-  - identificação do estudante
-  - data de nascimento
-  - vínculo escolar
-  - registros vacinais
-  - contato básico do responsável
-- Sem ingestão automatizada de dados externos neste protótipo.
+## Minimização de Dados
+- Coleta limitada ao necessário para execução da política vacinal:
+  - identificação do estudante;
+  - data de nascimento;
+  - vínculo escolar;
+  - registros vacinais;
+  - contato básico do responsável.
+- Não há ingestão automatizada de bases externas neste protótipo.
 
-## Controle de acesso
+## Controle de Acesso
 - Autenticação por JWT.
-- RBAC por perfil.
+- Controle de perfis com RBAC.
 - Segregação por escola para perfis escolares.
-- Perfis de saúde e administração com acesso conforme atribuição.
+- Acesso consolidado para saúde e administração conforme atribuição funcional.
 
-## Transparência e rastreabilidade
-- Campos de trilha (`created_at`, `updated_at`, `created_by`, `updated_by` em entidades principais).
-- `AuditLog` para ações críticas (estudante, registro vacinal e calendário).
+## Rastreabilidade e Transparência
+- Trilhas de autoria e tempo (`created_by`, `updated_by`, `created_at`, `updated_at`).
+- `AuditLog` para alterações críticas de estudantes, registros vacinais e calendário.
+- API documentada em OpenAPI/Swagger.
 
-## Retenção (simplificada)
-- Protótipo: sem política automática de expurgo.
-- Produção recomendada:
-  - política de retenção conforme normativa local;
+## Retenção (Escopo do Protótipo)
+- Não há expurgo automático no ambiente de demonstração.
+- Para produção, recomenda-se:
+  - política formal de retenção;
   - revisão periódica de necessidade;
-  - trilha de exclusão e anonimização, quando cabível.
+  - mecanismos de anonimização e exclusão quando cabíveis.
 
-## Segurança básica
+## Segurança Básica Implementada
 - Token com expiração.
-- Recomendado para produção:
-  - TLS
-  - hardening de senha/políticas
-  - rotação de segredos
-  - backups e controle de acesso ao banco
+- Segregação de acesso por contexto escolar.
+- Controle de permissões por papel.
+
+## Recomendações para Evolução
+- Comunicação obrigatória via TLS em todos os ambientes.
+- Política de rotação de segredos e credenciais.
+- Hardening de senha e autenticação reforçada.
+- Plano de backup e recuperação com testes periódicos.

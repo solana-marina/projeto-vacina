@@ -26,8 +26,28 @@ describe('DashboardService', () => {
       expect(res.items.length).toBe(1);
     });
 
-    const req = httpMock.expectOne('http://localhost:8000/api/dashboards/schools/coverage/');
+    const req = httpMock.expectOne('/api/dashboards/schools/coverage/');
     expect(req.request.method).toBe('GET');
     req.flush({ items: [{ schoolName: 'A' }] });
+  });
+
+  it('calls ranking endpoint', () => {
+    service.getRanking().subscribe((res) => {
+      expect(res.items.length).toBe(1);
+    });
+
+    const req = httpMock.expectOne('/api/dashboards/schools/ranking/');
+    expect(req.request.method).toBe('GET');
+    req.flush({ items: [{ schoolName: 'A', delayPercent: 10 }] });
+  });
+
+  it('calls age distribution endpoint', () => {
+    service.getAgeDistribution().subscribe((res) => {
+      expect(res.items.length).toBe(1);
+    });
+
+    const req = httpMock.expectOne('/api/dashboards/age-distribution/');
+    expect(req.request.method).toBe('GET');
+    req.flush({ items: [{ ageBucket: '108+', pendingCount: 3, overdueCount: 1 }] });
   });
 });

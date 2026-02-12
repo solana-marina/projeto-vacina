@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
+﻿import { Component, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder } from '@angular/forms';
 
@@ -30,10 +30,10 @@ export class Users implements OnInit {
   roles: UserRole[] = ['ADMIN', 'SCHOOL_OPERATOR', 'SCHOOL_MANAGER', 'HEALTH_PRO', 'HEALTH_MANAGER'];
   private roleLabels: Record<UserRole, string> = {
     ADMIN: 'Administrador',
-    SCHOOL_OPERATOR: 'Operador escola',
-    SCHOOL_MANAGER: 'Gestor escola',
-    HEALTH_PRO: 'Profissional saude',
-    HEALTH_MANAGER: 'Gestor saude',
+    SCHOOL_OPERATOR: 'Operador escolar',
+    SCHOOL_MANAGER: 'Gestor escolar',
+    HEALTH_PRO: 'Profissional de saúde',
+    HEALTH_MANAGER: 'Gestor de saúde',
   };
 
   form = this.fb.nonNullable.group({

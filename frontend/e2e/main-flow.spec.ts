@@ -21,7 +21,7 @@ test('fluxo principal escola + saude + export CSV', async ({ page }) => {
   await page.getByTestId('students-filter-submit').click();
 
   await expect(page.getByText(studentName)).toBeVisible();
-  await page.getByRole('button', { name: 'Detalhe' }).first().click();
+  await page.locator('tr.mat-mdc-row', { hasText: studentName }).getByRole('button', { name: 'Detalhe' }).click();
 
   await expect(page).toHaveURL(/\/school\/students\//);
   await page.getByTestId('vaccination-open-form').click();
@@ -37,7 +37,7 @@ test('fluxo principal escola + saude + export CSV', async ({ page }) => {
   await expect((await saveVaccinationResponse).status()).toBe(201);
 
   await expect(page.getByText('Registros vacinais')).toBeVisible();
-  await expect(page.getByText('Situacao vacinal')).toBeVisible();
+  await expect(page.getByText('Situação vacinal')).toBeVisible();
 
   await page.getByTestId('logout-button').click();
   await expect(page).toHaveURL(/\/auth\/login/);

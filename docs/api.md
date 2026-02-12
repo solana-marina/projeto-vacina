@@ -1,4 +1,4 @@
-﻿# API
+﻿# API do Projeto de Vacinação Contra o HPV
 
 ## Autenticação
 ### Obter token
@@ -25,13 +25,13 @@ Resposta (resumo):
 }
 ```
 
-### Refresh
+### Renovar token
 `POST /api/auth/token/refresh/`
 
-## Header de autorização
+### Header de autorização
 `Authorization: Bearer <access_token>`
 
-## Endpoints principais
+## Endpoints Principais
 - `GET/POST/PATCH/DELETE /api/users/` (admin)
 - `GET/POST/PATCH/DELETE /api/schools/`
 - `GET/POST/PATCH/DELETE /api/students/`
@@ -47,13 +47,18 @@ Resposta (resumo):
 - `GET /api/dashboards/age-distribution/`
 - `GET /api/exports/students-pending.csv`
 
-## Exemplos de consulta
+## Exemplos de Consulta
 ### Lista de estudantes com filtros
-`GET /api/students/?q=ana&status=ATRASADO&ageMin=12&ageMax=120&page=1`
+`GET /api/students/?q=ana&status=ATRASADO&ageMin=108&ageMax=179&page=1`
 
 ### Exportação CSV de pendências
 `GET /api/exports/students-pending.csv?schoolId=1&status=ATRASADO`
 
-## Swagger
+## Convenções Funcionais
+- O status vacinal é calculado com base na idade em meses e nas regras da versão ativa do calendário.
+- O escopo institucional de demonstração está focado em vacinação contra o HPV.
+- Perfis escolares têm acesso restrito à própria escola; saúde e administração possuem visão consolidada conforme permissões.
+
+## Swagger / OpenAPI
 - UI: `http://localhost:8000/api/docs/`
 - Schema: `http://localhost:8000/api/schema/`
