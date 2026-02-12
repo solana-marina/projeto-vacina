@@ -1,6 +1,6 @@
-# API
+﻿# API
 
-## Autenticacao
+## Autenticação
 ### Obter token
 `POST /api/auth/token/`
 
@@ -28,7 +28,7 @@ Resposta (resumo):
 ### Refresh
 `POST /api/auth/token/refresh/`
 
-## Header de autorizacao
+## Header de autorização
 `Authorization: Bearer <access_token>`
 
 ## Endpoints principais
@@ -51,7 +51,7 @@ Resposta (resumo):
 ### Lista de estudantes com filtros
 `GET /api/students/?q=ana&status=ATRASADO&ageMin=12&ageMax=120&page=1`
 
-### Export CSV de pendencias
+### Exportação CSV de pendências
 `GET /api/exports/students-pending.csv?schoolId=1&status=ATRASADO`
 
 ## Swagger

@@ -1,38 +1,38 @@
-# LGPD (versao simplificada para prototipo)
+﻿# LGPD (Versão Simplificada para Protótipo)
 
 ## Finalidade
-Tratamento de dados para monitoramento da situacao vacinal de estudantes e apoio a acoes de busca ativa da saude.
+Tratamento de dados para monitoramento da situação vacinal de estudantes e apoio a ações de busca ativa em saúde.
 
-## Base e minimizacao
-- Coleta restrita ao necessario para o fluxo operacional:
-  - identificacao do estudante
+## Base e minimização
+- Coleta restrita ao necessário para o fluxo operacional:
+  - identificação do estudante
   - data de nascimento
-  - vinculo escola
+  - vínculo escolar
   - registros vacinais
-  - contato basico do responsavel
-- Sem ingestao de dados externos automatizada neste prototipo.
+  - contato básico do responsável
+- Sem ingestão automatizada de dados externos neste protótipo.
 
 ## Controle de acesso
-- Autenticacao por JWT.
+- Autenticação por JWT.
 - RBAC por perfil.
-- Segregacao por escola para perfis escolares.
-- Perfis de saude e admin com acesso conforme atribuicao.
+- Segregação por escola para perfis escolares.
+- Perfis de saúde e administração com acesso conforme atribuição.
 
-## Transparencia e rastreabilidade
+## Transparência e rastreabilidade
 - Campos de trilha (`created_at`, `updated_at`, `created_by`, `updated_by` em entidades principais).
-- `AuditLog` para acoes criticas (estudante, registro vacinal, calendario).
+- `AuditLog` para ações críticas (estudante, registro vacinal e calendário).
 
-## Retencao (simplificada)
-- Prototipo: sem politica automatica de expurgo.
-- Producao recomendada:
-  - politica de retencao por normativa local
-  - revisao periodica de necessidade
-  - trilha de exclusao e anonimiza��o quando cabivel
+## Retenção (simplificada)
+- Protótipo: sem política automática de expurgo.
+- Produção recomendada:
+  - política de retenção conforme normativa local;
+  - revisão periódica de necessidade;
+  - trilha de exclusão e anonimização, quando cabível.
 
-## Seguranca basica
-- Token com expira��o.
-- Recomendado para producao:
+## Segurança básica
+- Token com expiração.
+- Recomendado para produção:
   - TLS
-  - hardening de senha/politicas
-  - rotacao de segredos
+  - hardening de senha/políticas
+  - rotação de segredos
   - backups e controle de acesso ao banco

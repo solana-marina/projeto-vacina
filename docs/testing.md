@@ -1,10 +1,10 @@
-# Testing
+﻿# Testes
 
-## Estrategia
-Piramide aplicada:
-1. Unitarios (maior base)
-2. Integracao API (pytest + banco de teste)
-3. E2E (Playwright) cobrindo fluxo principal
+## Estratégia
+Pirâmide aplicada:
+1. Unitários (maior base)
+2. Integração de API (pytest + banco de teste)
+3. E2E (Playwright) cobrindo o fluxo principal
 
 ## Backend
 ### Ferramentas
@@ -20,19 +20,19 @@ cd backend
 pytest -q
 ```
 
-### Casos obrigatorios cobertos
-- Motor de regras de imunizacao (EM_DIA, ATRASADO, INCOMPLETO, SEM_DADOS)
-- Segregacao entre escolas
-- Endpoints criticos:
+### Casos obrigatórios cobertos
+- Motor de regras de imunização (EM_DIA, ATRASADO, INCOMPLETO, SEM_DADOS)
+- Segregação entre escolas
+- Endpoints críticos:
   - `immunization-status`
   - dashboards
-  - permissoes de acesso
+  - permissões de acesso
 
 ### Cobertura backend
 - XML: `backend/coverage.xml`
 - HTML: `backend/htmlcov/index.html`
 
-## Frontend unit
+## Frontend unitário
 ### Ferramentas
 - Angular TestBed + Karma/Jasmine
 
@@ -42,7 +42,7 @@ cd frontend
 npm run test:unit
 ```
 
-### Escopo unitario coberto
+### Escopo unitário coberto
 - `AuthService`
 - `TokenStorageService`
 - `AuthGuard`
@@ -51,7 +51,7 @@ npm run test:unit
 - `ErrorInterceptor`
 - `StudentService`
 - `DashboardService`
-- componentes criticos: `Login`, `Students`
+- Componentes críticos: `Login`, `Students`
 
 ## E2E
 ### Ferramenta
@@ -66,24 +66,24 @@ npm run e2e
 
 O `playwright.config.ts` sobe backend e frontend automaticamente.
 
-### Fluxo e2e implementado
+### Fluxo E2E implementado
 1. Login escola
 2. Criar estudante
 3. Adicionar registro vacinal
-4. Ver status/pendencias
-5. Login saude
+4. Ver status/pendências
+5. Login saúde
 6. Busca ativa + dashboards
-7. Export CSV
+7. Exportação CSV
 
-## Convencoes de teste
+## Convenções de teste
 - AAA (Arrange, Act, Assert)
 - factories/fixtures para reduzir acoplamento
 - testes deterministas e independentes
 
-## Interpretacao de falhas
+## Interpretação de falhas
 - Backend:
-  - erro de permissao: revisar papel/scope por escola
-  - erro de status: revisar calendario ativo e regras por idade
+  - erro de permissão: revisar perfil/scope por escola
+  - erro de status: revisar calendário ativo e regras por idade
 - Frontend:
-  - erro unitario: revisar mocks e contratos HTTP
-  - erro e2e: revisar disponibilidade backend/frontend e seed
+  - erro unitário: revisar mocks e contratos HTTP
+  - erro E2E: revisar disponibilidade backend/frontend e seed
