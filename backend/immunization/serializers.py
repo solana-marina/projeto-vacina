@@ -36,7 +36,9 @@ class VaccineDoseRuleSerializer(serializers.ModelSerializer):
         min_age = attrs.get('recommended_min_age_months', getattr(self.instance, 'recommended_min_age_months', None))
         max_age = attrs.get('recommended_max_age_months', getattr(self.instance, 'recommended_max_age_months', None))
         if min_age is not None and max_age is not None and min_age > max_age:
-            raise serializers.ValidationError('recommended_min_age_months nao pode ser maior que recommended_max_age_months.')
+            raise serializers.ValidationError(
+                'A idade mínima não pode ser maior que a idade máxima. Revise os valores informados.'
+            )
 
         if schedule_version and vaccine and dose_number:
             duplicate_qs = VaccineDoseRule.objects.filter(
@@ -50,7 +52,7 @@ class VaccineDoseRuleSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     {
                         'non_field_errors': [
-                            f'Ja existe regra para vacina {vaccine.code}, dose {dose_number}, na versao {schedule_version.code}. Edite a regra existente.'
+                            f'Já existe uma regra para a vacina {vaccine.code}, dose {dose_number}, na versão {schedule_version.code}. Edite a regra existente.'
                         ]
                     }
                 )
@@ -71,7 +73,7 @@ class VaccineScheduleVersionSerializer(serializers.ModelSerializer):
             has_another_active = VaccineScheduleVersion.objects.exclude(pk=self.instance.pk).filter(is_active=True).exists()
             if not has_another_active:
                 raise serializers.ValidationError(
-                    {'is_active': 'Nao e permitido desativar o unico calendario ativo. Ative outra versao para trocar o calendario.'}
+                    {'is_active': 'Não é permitido desativar o único calendário ativo. Ative outra versão para fazer a troca.'}
                 )
         return attrs
 

@@ -22,6 +22,7 @@ def base_schedule():
     vaccine_triplice = VaccineFactory(code='TRIPLICE_VIRAL', name='Triplice Viral')
     vaccine_dtp = VaccineFactory(code='DTP', name='DTP')
     vaccine_hep = VaccineFactory(code='HEPATITE_B', name='Hepatite B')
+    vaccine_hpv = VaccineFactory(code='HPV', name='HPV')
 
     VaccineDoseRuleFactory(
         schedule_version=schedule,
@@ -37,6 +38,7 @@ def base_schedule():
     VaccineDoseRuleFactory(schedule_version=schedule, vaccine=vaccine_hep, dose_number=1, recommended_min_age_months=0, recommended_max_age_months=0)
     VaccineDoseRuleFactory(schedule_version=schedule, vaccine=vaccine_hep, dose_number=2, recommended_min_age_months=1, recommended_max_age_months=2)
     VaccineDoseRuleFactory(schedule_version=schedule, vaccine=vaccine_hep, dose_number=3, recommended_min_age_months=6, recommended_max_age_months=8)
+    VaccineDoseRuleFactory(schedule_version=schedule, vaccine=vaccine_hpv, dose_number=1, recommended_min_age_months=108, recommended_max_age_months=179)
 
     return schedule
 
@@ -59,8 +61,7 @@ def test_status_sem_dados_e_atraso(base_schedule):
 def test_status_em_dia(base_schedule):
     student = StudentFactory(birth_date=timezone.localdate() - datetime.timedelta(days=365))
 
-    due_rules = [rule for rule in base_schedule.rules.all() if result_age_months(student.birth_date) >= rule.recommended_min_age_months]
-    for rule in due_rules:
+    for rule in base_schedule.rules.all():
         VaccinationRecordFactory(student=student, vaccine=rule.vaccine, dose_number=rule.dose_number)
 
     result = build_student_immunization_status(student)
@@ -84,6 +85,20 @@ def test_status_incompleto(base_schedule):
     result = build_student_immunization_status(student)
     assert result['status'] == 'INCOMPLETO'
     assert any(item['vaccineCode'] == 'DTP' and item['doseNumber'] == 4 for item in result['pending'])
+    assert any(item['vaccineCode'] == 'HPV' and item['status'] == 'FUTURA' for item in result['future'])
+
+
+@pytest.mark.django_db
+def test_status_em_dia_quando_so_falta_vacina_futura(base_schedule):
+    student = StudentFactory(birth_date=timezone.localdate() - datetime.timedelta(days=30 * 24))
+
+    for rule in base_schedule.rules.exclude(vaccine__code='HPV'):
+        VaccinationRecordFactory(student=student, vaccine=rule.vaccine, dose_number=rule.dose_number)
+
+    result = build_student_immunization_status(student)
+    assert result['status'] == 'EM_DIA'
+    assert result['pending'] == []
+    assert any(item['vaccineCode'] == 'HPV' and item['status'] == 'FUTURA' for item in result['future'])
 
 
 @pytest.mark.django_db
@@ -102,11 +117,3 @@ def test_status_atrasado(base_schedule):
     result = build_student_immunization_status(student)
     assert result['status'] == 'ATRASADO'
     assert any(item['status'] == 'ATRASADA' for item in result['pending'])
-
-
-def result_age_months(birth_date):
-    today = timezone.localdate()
-    months = (today.year - birth_date.year) * 12 + (today.month - birth_date.month)
-    if today.day < birth_date.day:
-        months -= 1
-    return max(months, 0)

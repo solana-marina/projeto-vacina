@@ -3,11 +3,12 @@ from django.db import models
 
 
 DEFAULT_AGE_BUCKETS = [
-    {'label': '0-11', 'minMonths': 0, 'maxMonths': 11},
-    {'label': '12-59', 'minMonths': 12, 'maxMonths': 59},
-    {'label': '60-107', 'minMonths': 60, 'maxMonths': 107},
-    {'label': '108-179', 'minMonths': 108, 'maxMonths': 179},
-    {'label': '180+', 'minMonths': 180, 'maxMonths': 999},
+    {'label': 'Recem-nascido (0 a 28 dias)', 'minMonths': 0, 'maxMonths': 0},
+    {'label': 'Lactente (1 a 23 meses)', 'minMonths': 1, 'maxMonths': 23},
+    {'label': 'Pre-escolar (2 a 4 anos)', 'minMonths': 24, 'maxMonths': 59},
+    {'label': 'Escolar (5 a 9 anos)', 'minMonths': 60, 'maxMonths': 119},
+    {'label': 'Adolescente (10 a 19 anos)', 'minMonths': 120, 'maxMonths': 239},
+    {'label': 'Adulto (20 anos ou mais)', 'minMonths': 240, 'maxMonths': 999},
 ]
 
 

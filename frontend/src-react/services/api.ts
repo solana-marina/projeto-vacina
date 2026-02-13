@@ -22,6 +22,7 @@ export interface StudentQuery {
   q?: string;
   status?: string;
   schoolId?: number;
+  vaccineId?: number;
   page?: number;
   ageMin?: number;
   ageMax?: number;

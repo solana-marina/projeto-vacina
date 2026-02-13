@@ -34,9 +34,10 @@ class DashboardFiltersMixin:
                 age_min=request.query_params.get('ageMin'),
                 age_max=request.query_params.get('ageMax'),
                 sex=request.query_params.get('sex'),
+                vaccine_id=request.query_params.get('vaccineId'),
             )
         except (TypeError, ValueError):
-            raise ValidationError({'detail': 'ageMin e ageMax devem ser números inteiros em meses.'})
+            raise ValidationError({'detail': 'ageMin, ageMax e vaccineId devem ser valores numéricos válidos.'})
 
 
 class SchoolCoverageDashboardView(DashboardFiltersMixin, APIView):
@@ -46,7 +47,10 @@ class SchoolCoverageDashboardView(DashboardFiltersMixin, APIView):
         if not has_dashboard_school_access(request.user):
             raise PermissionDenied('Sem permissao para dashboard de cobertura.')
 
-        data = build_coverage_by_school(self._get_filtered_students(request))
+        data = build_coverage_by_school(
+            self._get_filtered_students(request),
+            vaccine_id=request.query_params.get('vaccineId'),
+        )
         return Response({'items': data})
 
 
@@ -57,7 +61,10 @@ class SchoolRankingDashboardView(DashboardFiltersMixin, APIView):
         if not has_health_dashboard_access(request.user):
             raise PermissionDenied('Sem permissao para dashboard de ranking.')
 
-        data = build_ranking(self._get_filtered_students(request))
+        data = build_ranking(
+            self._get_filtered_students(request),
+            vaccine_id=request.query_params.get('vaccineId'),
+        )
         return Response({'items': data})
 
 
@@ -69,7 +76,11 @@ class AgeDistributionDashboardView(DashboardFiltersMixin, APIView):
             raise PermissionDenied('Sem permissao para dashboard de faixa etaria.')
 
         age_buckets = get_user_age_buckets(request.user)
-        data = build_pending_age_distribution(self._get_filtered_students(request), age_buckets=age_buckets)
+        data = build_pending_age_distribution(
+            self._get_filtered_students(request),
+            age_buckets=age_buckets,
+            vaccine_id=request.query_params.get('vaccineId'),
+        )
         return Response({'items': data, 'ageBuckets': age_buckets})
 
 
@@ -79,15 +90,7 @@ class DashboardAgeBucketsPreferenceView(APIView):
     def get(self, request):
         if not has_health_dashboard_access(request.user):
             raise PermissionDenied('Sem permissao para preferencias de dashboard.')
-
-        preference, _ = DashboardPreference.objects.get_or_create(
-            user=request.user,
-            defaults={'age_buckets_json': DEFAULT_AGE_BUCKETS},
-        )
-        buckets = normalize_age_buckets(preference.age_buckets_json)
-        if buckets != preference.age_buckets_json:
-            preference.age_buckets_json = buckets
-            preference.save(update_fields=['age_buckets_json', 'updated_at'])
+        buckets = get_user_age_buckets(request.user)
         return Response({'ageBuckets': buckets})
 
     def put(self, request):

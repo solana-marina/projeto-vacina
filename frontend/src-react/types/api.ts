@@ -55,6 +55,16 @@ export interface ImmunizationPending {
   status: 'PENDENTE' | 'ATRASADA';
 }
 
+export interface ImmunizationFuture {
+  vaccineCode: string;
+  vaccineName: string;
+  doseNumber: number;
+  recommendedMinAgeMonths: number;
+  recommendedMaxAgeMonths: number;
+  monthsUntilDue: number;
+  status: 'FUTURA';
+}
+
 export interface ImmunizationStatus {
   studentId: number;
   studentName: string;
@@ -63,6 +73,7 @@ export interface ImmunizationStatus {
   asOfDate: string;
   activeScheduleCode: string | null;
   pending: ImmunizationPending[];
+  future: ImmunizationFuture[];
 }
 
 export interface Vaccine {
@@ -126,6 +137,7 @@ export interface AgeDistributionItem {
   ageBucket: string;
   pendingCount: number;
   overdueCount: number;
+  upToDateCount: number;
 }
 
 export interface AgeBucket {

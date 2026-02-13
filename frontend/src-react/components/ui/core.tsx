@@ -69,7 +69,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className
 Input.displayName = 'Input';
 
 export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
-  label?: string;
+  label?: React.ReactNode;
 }
 
 export function Select({ label, className, children, ...props }: SelectProps) {
@@ -119,12 +119,24 @@ const BADGE_STYLES: Record<string, string> = {
   INACTIVE: 'bg-red-100 text-red-700 border-red-200',
 };
 
+const BADGE_LABELS: Record<string, string> = {
+  EM_DIA: 'EM DIA',
+  ATRASADO: 'ATRASADO',
+  INCOMPLETO: 'PENDENTE',
+  SEM_DADOS: 'SEM DADOS',
+  PENDENTE: 'PENDENTE',
+  ATRASADA: 'ATRASADA',
+  ACTIVE: 'ATIVO',
+  INACTIVE: 'INATIVO',
+};
+
 export function Badge({ status, className }: { status: string; className?: string }) {
   const normalized = status.toUpperCase().replace(' ', '_');
   const style = BADGE_STYLES[normalized] ?? BADGE_STYLES.SEM_DADOS;
+  const label = BADGE_LABELS[normalized] ?? status.replace(/_/g, ' ');
   return (
     <span className={cn('inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold', style, className)}>
-      {status.replace(/_/g, ' ')}
+      {label}
     </span>
   );
 }

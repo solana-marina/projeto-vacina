@@ -1,16 +1,17 @@
 ﻿import React from 'react';
-import { AlertCircle, CheckCircle, Clock, Filter, Pencil, Plus, Search, Users } from 'lucide-react';
+import { AlertCircle, CheckCircle, Clock, Filter, Pencil, Plus, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
+import { StudentFilterValues, StudentFiltersPanel } from '../../components/filters/StudentFiltersPanel';
 import { Modal } from '../../components/ui/modal';
 import { Badge, Button, Card, Input, Select, Table, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/core';
 import { useAuth } from '../../context/AuthContext';
-import { formatAgeMonths } from '../../lib/age';
+import { formatAgeMonths, monthsFromYearsMonths } from '../../lib/age';
 import { parseApiError } from '../../lib/errors';
 import { formatSex } from '../../lib/sex';
 import { api } from '../../services/api';
-import { School, Student } from '../../types/api';
+import { School, Student, Vaccine } from '../../types/api';
 
 const PAGE_SIZE = 10;
 
@@ -38,14 +39,20 @@ export function StudentsPage({ adminMode = false }: StudentsPageProps) {
 
   const [students, setStudents] = React.useState<Student[]>([]);
   const [schools, setSchools] = React.useState<School[]>([]);
+  const [vaccines, setVaccines] = React.useState<Vaccine[]>([]);
   const [total, setTotal] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
   const [page, setPage] = React.useState(1);
 
   const [query, setQuery] = React.useState('');
+  const [vaccineId, setVaccineId] = React.useState('');
   const [status, setStatus] = React.useState('');
   const [sexFilter, setSexFilter] = React.useState('');
   const [schoolFilter, setSchoolFilter] = React.useState<string>('');
+  const [ageMinYears, setAgeMinYears] = React.useState('');
+  const [ageMinMonths, setAgeMinMonths] = React.useState('');
+  const [ageMaxYears, setAgeMaxYears] = React.useState('');
+  const [ageMaxMonths, setAgeMaxMonths] = React.useState('');
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [editing, setEditing] = React.useState<Student | null>(null);
@@ -59,17 +66,49 @@ export function StudentsPage({ adminMode = false }: StudentsPageProps) {
   });
 
   const effectiveSchoolId = adminMode ? (schoolFilter ? Number(schoolFilter) : undefined) : session?.schoolId ?? undefined;
+  const filters: StudentFilterValues = {
+    q: query,
+    schoolId: schoolFilter,
+    vaccineId,
+    status,
+    sex: sexFilter,
+    ageMinYears,
+    ageMinMonths,
+    ageMaxYears,
+    ageMaxMonths,
+  };
+
+  const setFilter = (field: keyof StudentFilterValues, value: string) => {
+    const map: Record<keyof StudentFilterValues, React.Dispatch<React.SetStateAction<string>>> = {
+      q: setQuery,
+      schoolId: setSchoolFilter,
+      vaccineId: setVaccineId,
+      status: setStatus,
+      sex: setSexFilter,
+      ageMinYears: setAgeMinYears,
+      ageMinMonths: setAgeMinMonths,
+      ageMaxYears: setAgeMaxYears,
+      ageMaxMonths: setAgeMaxMonths,
+    };
+    map[field](value);
+  };
 
   const loadStudents = React.useCallback(
-    async (requestedPage = page) => {
+    async (requestedPage = 1) => {
       setLoading(true);
       try {
+        const ageMin = monthsFromYearsMonths(ageMinYears, ageMinMonths);
+        const ageMax = monthsFromYearsMonths(ageMaxYears, ageMaxMonths);
+
         const response = await api.listStudents({
           page: requestedPage,
           q: query || undefined,
+          vaccineId: vaccineId ? Number(vaccineId) : undefined,
           status: status || undefined,
           schoolId: effectiveSchoolId,
           sex: (sexFilter || undefined) as 'F' | 'M' | 'NI' | undefined,
+          ageMin,
+          ageMax,
         });
         setStudents(response.results);
         setTotal(response.count);
@@ -80,7 +119,7 @@ export function StudentsPage({ adminMode = false }: StudentsPageProps) {
         setLoading(false);
       }
     },
-    [effectiveSchoolId, page, query, sexFilter, status],
+    [ageMaxMonths, ageMaxYears, ageMinMonths, ageMinYears, effectiveSchoolId, query, sexFilter, status, vaccineId],
   );
 
   React.useEffect(() => {
@@ -88,14 +127,18 @@ export function StudentsPage({ adminMode = false }: StudentsPageProps) {
   }, [loadStudents]);
 
   React.useEffect(() => {
-    if (!adminMode) {
-      return;
-    }
     void (async () => {
       try {
-        setSchools(await api.listSchools());
+        const vaccineItemsPromise = api.listVaccines();
+        if (adminMode) {
+          const [schoolItems, vaccineItems] = await Promise.all([api.listSchools(), vaccineItemsPromise]);
+          setSchools(schoolItems);
+          setVaccines(vaccineItems);
+          return;
+        }
+        setVaccines(await vaccineItemsPromise);
       } catch (error) {
-        toast.error(parseApiError(error, 'Não foi possível carregar escolas.'));
+        toast.error(parseApiError(error, 'Nao foi possivel carregar filtros.'));
       }
     })();
   }, [adminMode]);
@@ -181,62 +224,24 @@ export function StudentsPage({ adminMode = false }: StudentsPageProps) {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="Total na página" value={String(students.length)} icon={Users} color="#0B5D7A" />
+        <StatCard title="Total de estudantes" value={String(total)} icon={Users} color="#0B5D7A" />
         <StatCard title="Em dia" value={String(emDia)} icon={CheckCircle} color="#2A9D8F" />
         <StatCard title="Atrasado" value={String(atrasado)} icon={AlertCircle} color="#E76F51" />
         <StatCard title="Sem dados" value={String(semDados)} icon={Clock} color="#F4A261" />
       </div>
 
-      <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
-          <div className="relative md:col-span-2">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-            <Input
-              data-testid="students-filter-name"
-              placeholder="Buscar por nome"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <Select value={status} onChange={(event) => setStatus(event.target.value)}>
-            <option value="">Todos os status</option>
-            <option value="EM_DIA">Em dia</option>
-            <option value="ATRASADO">Atrasado</option>
-            <option value="INCOMPLETO">Incompleto</option>
-            <option value="SEM_DADOS">Sem dados</option>
-          </Select>
-          <Select value={sexFilter} onChange={(event) => setSexFilter(event.target.value)}>
-            <option value="">Todos os sexos</option>
-            <option value="F">Feminino</option>
-            <option value="M">Masculino</option>
-            <option value="NI">Não informado</option>
-          </Select>
-          {adminMode ? (
-            <Select value={schoolFilter} onChange={(event) => setSchoolFilter(event.target.value)}>
-              <option value="">Todas as escolas</option>
-              {schools.map((school) => (
-                <option key={school.id} value={school.id}>
-                  {school.name}
-                </option>
-              ))}
-            </Select>
-          ) : (
-            <Button data-testid="students-filter-submit" className="gap-2" onClick={() => void loadStudents(1)}>
-              <Filter className="h-4 w-4" />
-              Aplicar
-            </Button>
-          )}
-        </div>
-        {adminMode ? (
-          <div className="mt-3 flex justify-end">
-            <Button data-testid="students-filter-submit" className="gap-2" onClick={() => void loadStudents(1)}>
-              <Filter className="h-4 w-4" />
-              Aplicar
-            </Button>
-          </div>
-        ) : null}
-      </div>
+      <StudentFiltersPanel
+        values={filters}
+        onChange={setFilter}
+        onApply={() => void loadStudents(1)}
+        schools={schools}
+        vaccines={vaccines}
+        showSchoolFilter={adminMode}
+        applyButtonTestId="students-filter-submit"
+        applyButtonLabel="Aplicar"
+        applyButtonIcon={<Filter className="mr-2 h-4 w-4" />}
+        namePlaceholder="Buscar por nome"
+      />
 
       <Card className="overflow-hidden border-0 shadow-md">
         <Table>

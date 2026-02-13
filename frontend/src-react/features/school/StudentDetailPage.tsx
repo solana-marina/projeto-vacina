@@ -52,6 +52,7 @@ export function StudentDetailPage({ adminMode = false }: StudentDetailPageProps)
   const [loading, setLoading] = React.useState(true);
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [isFutureModalOpen, setIsFutureModalOpen] = React.useState(false);
   const [form, setForm] = React.useState(EMPTY_RECORD);
 
   const listPath = adminMode ? '/admin/students' : '/school/students';
@@ -202,8 +203,11 @@ export function StudentDetailPage({ adminMode = false }: StudentDetailPageProps)
           </Card>
 
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Pendências</CardTitle>
+              <Button variant="outline" size="sm" onClick={() => setIsFutureModalOpen(true)} disabled={status.future.length === 0}>
+                Vacinas futuras
+              </Button>
             </CardHeader>
             <CardContent className="space-y-3">
               {status.pending.length === 0 ? (
@@ -337,6 +341,39 @@ export function StudentDetailPage({ adminMode = false }: StudentDetailPageProps)
             onChange={(event) => setForm((prev) => ({ ...prev, notes: event.target.value }))}
             placeholder="Observações opcionais"
           />
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={isFutureModalOpen}
+        onClose={() => setIsFutureModalOpen(false)}
+        title="Vacinas futuras"
+        footer={
+          <Button variant="outline" onClick={() => setIsFutureModalOpen(false)}>
+            Fechar
+          </Button>
+        }
+      >
+        <div className="space-y-3">
+          {status.future.length === 0 ? (
+            <p className="rounded-lg border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700">
+              Não há vacinas futuras pendentes para este estudante.
+            </p>
+          ) : (
+            status.future.map((futureItem, index) => (
+              <div key={`${futureItem.vaccineCode}-${futureItem.doseNumber}-${index}`} className="rounded-lg border bg-gray-50 p-3">
+                <p className="text-sm font-semibold text-gray-900">
+                  {futureItem.vaccineName} - Dose {futureItem.doseNumber}
+                </p>
+                <p className="mt-1 text-xs text-gray-600">
+                  Faixa recomendada: {formatAgeRangeMonths(futureItem.recommendedMinAgeMonths, futureItem.recommendedMaxAgeMonths)}
+                </p>
+                <p className="mt-1 text-xs text-gray-600">
+                  Prevista para daqui a aproximadamente {formatAgeMonths(futureItem.monthsUntilDue)}.
+                </p>
+              </div>
+            ))
+          )}
         </div>
       </Modal>
     </div>

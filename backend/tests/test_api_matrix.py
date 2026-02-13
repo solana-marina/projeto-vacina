@@ -177,11 +177,18 @@ def test_students_scoping_sex_and_fields(api_client, api_setup):
 @pytest.mark.django_db
 def test_student_immunization_status_and_nested_vaccination_endpoints(api_client, api_setup):
     student_a = api_setup['student_a']
+    student_b = api_setup['student_b']
 
     api_client.force_authenticate(user=api_setup['school_user'])
     status_response = api_client.get(f'/api/students/{student_a.id}/immunization-status/')
     assert status_response.status_code == 200
     assert status_response.data['studentId'] == student_a.id
+    assert any(item['vaccineCode'] == 'DTP' for item in status_response.data['pending'])
+
+    api_client.force_authenticate(user=api_setup['health_user'])
+    status_student_b = api_client.get(f'/api/students/{student_b.id}/immunization-status/')
+    assert status_student_b.status_code == 200
+    assert any(item['vaccineCode'] == 'HPV' for item in status_student_b.data['pending'])
 
     create_record_response = api_client.post(
         f'/api/students/{student_a.id}/vaccinations/',
@@ -200,18 +207,18 @@ def test_student_immunization_status_and_nested_vaccination_endpoints(api_client
 @pytest.mark.django_db
 def test_dashboard_permissions_and_filters(api_client, api_setup):
     api_client.force_authenticate(user=api_setup['school_user'])
-    coverage_allowed = api_client.get('/api/dashboards/schools/coverage/?sex=F')
+    coverage_allowed = api_client.get(f"/api/dashboards/schools/coverage/?sex=F&vaccineId={api_setup['vaccine_hpv'].id}")
     assert coverage_allowed.status_code == 200
 
     ranking_forbidden = api_client.get('/api/dashboards/schools/ranking/')
     assert ranking_forbidden.status_code == 403
 
     api_client.force_authenticate(user=api_setup['health_user'])
-    ranking_allowed = api_client.get('/api/dashboards/schools/ranking/?sex=F')
+    ranking_allowed = api_client.get(f"/api/dashboards/schools/ranking/?sex=F&vaccineId={api_setup['vaccine_hpv'].id}")
     assert ranking_allowed.status_code == 200
     assert 'items' in ranking_allowed.data
 
-    age_distribution_allowed = api_client.get('/api/dashboards/age-distribution/?sex=F')
+    age_distribution_allowed = api_client.get(f"/api/dashboards/age-distribution/?sex=F&vaccineId={api_setup['vaccine_hpv'].id}")
     assert age_distribution_allowed.status_code == 200
     assert 'items' in age_distribution_allowed.data
 
@@ -242,10 +249,11 @@ def test_dashboard_age_bucket_preferences(api_client, api_setup):
 def test_export_csv_semicolon_and_anonymized(api_client, api_setup):
     api_client.force_authenticate(user=api_setup['health_user'])
 
-    response = api_client.get('/api/exports/students-pending.csv?sex=F')
+    response = api_client.get(f"/api/exports/students-pending.csv?vaccineId={api_setup['vaccine_hpv'].id}")
     assert response.status_code == 200
     content = response.content.decode('utf-8')
     assert 'student_id;student_name;school;status' in content
+    assert ';HPV;' in content
 
     anonymized = api_client.get('/api/exports/students-pending.csv?sex=F&anonymized=true')
     assert anonymized.status_code == 200
@@ -269,7 +277,7 @@ def test_duplicate_rule_returns_friendly_error(api_client, api_setup):
     )
 
     assert response.status_code == 400
-    assert 'Ja existe regra para vacina HPV' in str(response.data)
+    assert 'Já existe uma regra para a vacina HPV' in str(response.data)
 
 
 @pytest.mark.django_db

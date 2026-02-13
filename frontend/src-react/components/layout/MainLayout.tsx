@@ -28,6 +28,23 @@ interface MenuItem {
   testId?: string;
 }
 
+const PATH_LABELS: Record<string, string> = {
+  admin: 'Admin',
+  school: 'Escola',
+  health: 'Saúde',
+  students: 'Estudantes',
+  student: 'Estudante',
+  schools: 'Escolas',
+  users: 'Usuários',
+  schedule: 'Calendário',
+  dashboards: 'Dashboards',
+  monitoring: 'Auditoria e Logs',
+  pending: 'Pendências',
+  search: 'Busca Ativa',
+  auth: 'Autenticação',
+  login: 'Login',
+};
+
 const MENU_BY_ROLE: Record<UserRole, MenuItem[]> = {
   ADMIN: [
     { label: 'Estudantes', path: '/admin/students', icon: Users, section: 'Operação', testId: 'admin-nav-students' },
@@ -154,7 +171,7 @@ export function MainLayout({ children, currentPath }: MainLayoutProps) {
                 .map((part, index) => (
                   <React.Fragment key={`${part}-${index}`}>
                     <span className="mx-2">/</span>
-                    <span className="capitalize font-medium text-gray-900">{part.replace('-', ' ')}</span>
+                    <span className="capitalize font-medium text-gray-900">{PATH_LABELS[part] || part.replace('-', ' ')}</span>
                   </React.Fragment>
                 ))}
             </nav>

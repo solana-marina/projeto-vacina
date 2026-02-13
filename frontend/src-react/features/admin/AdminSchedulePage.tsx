@@ -229,20 +229,6 @@ export function AdminSchedulePage() {
     }
   };
 
-  const deleteVaccine = async (vaccine: Vaccine) => {
-    if (!window.confirm(`Excluir vacina ${vaccine.code} - ${vaccine.name}?`)) {
-      return;
-    }
-
-    try {
-      await api.deleteVaccine(vaccine.id);
-      toast.success('Vacina excluída.');
-      await load();
-    } catch (error) {
-      toast.error(parseApiError(error, 'Não foi possível excluir vacina vinculada a regra/registro.'));
-    }
-  };
-
   const onScheduleChange = async (value: string) => {
     const scheduleId = Number(value);
     setSelectedScheduleId(scheduleId);
@@ -291,14 +277,9 @@ export function AdminSchedulePage() {
                     <TableCell className="font-mono text-xs">{vaccine.code}</TableCell>
                     <TableCell>{vaccine.name}</TableCell>
                     <TableCell className="text-right">
-                      <div className="inline-flex gap-2">
-                        <Button variant="outline" size="sm" onClick={() => openEditVaccineModal(vaccine)}>
-                          <Edit className="h-3.5 w-3.5" />
-                        </Button>
-                        <Button variant="ghost" size="sm" onClick={() => void deleteVaccine(vaccine)}>
-                          <Trash2 className="h-3.5 w-3.5 text-red-600" />
-                        </Button>
-                      </div>
+                      <Button variant="outline" size="sm" onClick={() => openEditVaccineModal(vaccine)}>
+                        <Edit className="h-3.5 w-3.5" />
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}

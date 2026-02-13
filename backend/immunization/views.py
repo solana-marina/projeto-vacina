@@ -198,12 +198,14 @@ def _filter_students_for_export(request, students):
     age_min = request.query_params.get('ageMin')
     age_max = request.query_params.get('ageMax')
     sex = request.query_params.get('sex')
+    vaccine_id = request.query_params.get('vaccineId')
 
     try:
         age_min_value = int(age_min) if age_min is not None else None
         age_max_value = int(age_max) if age_max is not None else None
+        vaccine_id_value = int(vaccine_id) if vaccine_id not in (None, '') else None
     except (TypeError, ValueError):
-        raise ValidationError({'detail': 'ageMin e ageMax devem ser números inteiros em meses.'})
+        raise ValidationError({'detail': 'ageMin, ageMax e vaccineId devem ser valores numéricos válidos.'})
 
     result = []
     for student in students:
@@ -220,7 +222,10 @@ def _filter_students_for_export(request, students):
         if sex and student.sex != sex:
             continue
 
-        status_data = build_student_immunization_status(student)
+        status_data = build_student_immunization_status(
+            student,
+            vaccine_ids={vaccine_id_value} if vaccine_id_value else None,
+        )
         if status_filter and status_data['status'] != status_filter:
             continue
 

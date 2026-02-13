@@ -1,4 +1,4 @@
-from rest_framework import status, viewsets
+﻿from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.response import Response
@@ -42,6 +42,7 @@ class StudentViewSet(viewsets.ModelViewSet):
         age_min = self.request.query_params.get('ageMin')
         age_max = self.request.query_params.get('ageMax')
         sex_filter = self.request.query_params.get('sex')
+        vaccine_id = self.request.query_params.get('vaccineId')
 
         if q:
             students = [student for student in students if q.lower() in student.full_name.lower()]
@@ -54,8 +55,9 @@ class StudentViewSet(viewsets.ModelViewSet):
         try:
             age_min_value = int(age_min) if age_min is not None else None
             age_max_value = int(age_max) if age_max is not None else None
+            vaccine_id_value = int(vaccine_id) if vaccine_id not in (None, '') else None
         except (TypeError, ValueError):
-            raise ValidationError({'detail': 'ageMin e ageMax devem ser números inteiros em meses.'})
+            raise ValidationError({'detail': 'ageMin, ageMax e vaccineId devem ser valores numericos validos.'})
 
         status_cache = {}
         filtered_students = []
@@ -69,7 +71,10 @@ class StudentViewSet(viewsets.ModelViewSet):
             if sex_filter and student.sex != sex_filter:
                 continue
 
-            status_data = build_student_immunization_status(student)
+            status_data = build_student_immunization_status(
+                student,
+                vaccine_ids={vaccine_id_value} if vaccine_id_value else None,
+            )
             status_cache[student.id] = status_data
             if status_filter and status_data['status'] != status_filter:
                 continue

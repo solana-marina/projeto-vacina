@@ -9,6 +9,9 @@ Este repositório apresenta um protótipo funcional de nível 3 de maturidade di
 - Apoiar busca ativa nominal, dashboards e exportações operacionais.
 - Garantir governança mínima com autenticação, perfis, segregação e auditoria.
 
+## Diagrama do Modelo de Dados
+![Diagrama do modelo de dados](docs/images/modelo-dados.svg)
+
 ## Perfis e Escopo
 - `ADMIN`: visão global, estudantes, dashboards, auditoria, logs de erro, escolas, usuários e calendário.
 - `ESCOLA`: gestão de estudantes e registros vacinais da própria escola, pendências da unidade.
