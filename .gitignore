@@ -1,8 +1,5 @@
 legacy/
 test-result/
-tools/mermaid-cli/
-tools/graphviz-js/
-docs/modelo-dados.mmd
 
 # Python
 __pycache__/
