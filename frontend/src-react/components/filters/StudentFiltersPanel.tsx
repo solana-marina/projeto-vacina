@@ -29,10 +29,25 @@ interface StudentFiltersPanelProps {
 }
 
 function HelpHint({ text }: { text: string }) {
+  const [isOpen, setIsOpen] = React.useState(false);
+
   return (
-    <span className="group relative inline-flex h-4 w-4 items-center justify-center rounded-full border border-gray-300 text-[10px] font-bold text-gray-500">
-      ?
-      <span className="pointer-events-none absolute right-6 top-1/2 z-20 hidden w-72 -translate-y-1/2 rounded-lg border border-gray-200 bg-white p-3 text-xs font-normal text-gray-700 shadow-lg group-hover:block">
+    <span
+      className="relative inline-flex"
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
+    >
+      <button
+        type="button"
+        className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-gray-300 text-[10px] font-bold text-gray-500"
+        onClick={() => setIsOpen((prev) => !prev)}
+        aria-label="Explicação do status"
+      >
+        ?
+      </button>
+      <span
+        className={`absolute right-0 top-6 z-20 w-[min(18rem,calc(100vw-2rem))] rounded-lg border border-gray-200 bg-white p-3 text-xs font-normal text-gray-700 shadow-lg ${isOpen ? 'block' : 'hidden'}`}
+      >
         {text}
       </span>
     </span>
@@ -77,7 +92,7 @@ export function StudentFiltersPanel({
         </Select>
         <Select
           label={
-            <span className="inline-flex items-center gap-1">
+            <span className="inline-flex items-center gap-1 whitespace-nowrap">
               Status
               <HelpHint text="Em dia: sem dose pendente para a idade atual. Pendente: ha dose liberada por idade que ainda nao foi registrada. Atrasado: ha dose pendente e o prazo maximo ja passou. Sem dados: nenhum registro vacinal." />
             </span>
@@ -99,7 +114,7 @@ export function StudentFiltersPanel({
         </Select>
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
         <Input label="Idade minima (anos)" type="number" min={0} value={values.ageMinYears} onChange={(event) => onChange('ageMinYears', event.target.value)} />
         <Input
           label="Idade minima (meses)"
@@ -121,7 +136,7 @@ export function StudentFiltersPanel({
       </div>
 
       <div className="mt-4 flex justify-end">
-        <Button data-testid={applyButtonTestId} onClick={onApply}>
+        <Button data-testid={applyButtonTestId} onClick={onApply} className="w-full sm:w-auto">
           {applyButtonIcon}
           {applyButtonLabel}
         </Button>

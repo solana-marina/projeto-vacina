@@ -48,7 +48,7 @@ export function PendingPage() {
           <h1 className="text-2xl font-bold font-poppins text-gray-900">Pendências da escola</h1>
           <p className="text-gray-500">Acompanhe estudantes atrasados, incompletos ou sem dados.</p>
         </div>
-        <Button variant="outline" onClick={() => void load()}>
+        <Button variant="outline" className="w-full sm:w-auto" onClick={() => void load()}>
           <RefreshCw className="mr-2 h-4 w-4" />
           Atualizar lista
         </Button>
@@ -77,7 +77,7 @@ export function PendingPage() {
 
       <Card>
         <div className="border-b p-4">
-          <div className="relative max-w-sm">
+          <div className="relative w-full sm:max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <Input placeholder="Buscar estudante..." className="pl-9" value={query} onChange={(event) => setQuery(event.target.value)} />
           </div>

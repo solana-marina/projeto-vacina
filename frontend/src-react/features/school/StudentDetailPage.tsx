@@ -203,9 +203,9 @@ export function StudentDetailPage({ adminMode = false }: StudentDetailPageProps)
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
               <CardTitle>Pendências</CardTitle>
-              <Button variant="outline" size="sm" onClick={() => setIsFutureModalOpen(true)} disabled={status.future.length === 0}>
+              <Button variant="outline" size="sm" className="w-full sm:w-auto" onClick={() => setIsFutureModalOpen(true)} disabled={status.future.length === 0}>
                 Vacinas futuras
               </Button>
             </CardHeader>
@@ -232,12 +232,12 @@ export function StudentDetailPage({ adminMode = false }: StudentDetailPageProps)
         </div>
 
         <Card className="lg:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle className="inline-flex items-center gap-2">
               <FileText className="h-5 w-5 text-[#0B5D7A]" />
               Registros vacinais
             </CardTitle>
-            <Button data-testid="vaccination-open-form" size="sm" onClick={openCreateModal}>
+            <Button data-testid="vaccination-open-form" size="sm" className="w-full sm:w-auto" onClick={openCreateModal}>
               <Plus className="mr-1 h-4 w-4" />
               Novo registro
             </Button>

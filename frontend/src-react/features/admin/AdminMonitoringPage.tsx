@@ -180,9 +180,9 @@ export function AdminMonitoringPage() {
           />
         </div>
 
-        <div className="mt-4 flex justify-end gap-2">
-          <Button variant="ghost" onClick={clearFilters}>Limpar</Button>
-          <Button onClick={applyFilters}>
+        <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <Button variant="ghost" className="w-full sm:w-auto" onClick={clearFilters}>Limpar</Button>
+          <Button className="w-full sm:w-auto" onClick={applyFilters}>
             <Search className="mr-2 h-4 w-4" />
             Aplicar filtros
           </Button>
@@ -246,12 +246,12 @@ export function AdminMonitoringPage() {
           <div className="p-6 text-center text-gray-500">Nenhum registro encontrado.</div>
         ) : null}
 
-        <div className="flex items-center justify-between border-t px-4 py-3 text-sm text-gray-500">
+        <div className="flex flex-col gap-3 border-t px-4 py-3 text-sm text-gray-500 sm:flex-row sm:items-center sm:justify-between">
           <span>Total: {count}</span>
-          <div className="flex gap-2">
-            <Button variant="outline" disabled={page <= 1} onClick={() => setPage((prev) => prev - 1)}>Anterior</Button>
-            <span className="px-2 py-1">Página {page}</span>
-            <Button variant="outline" disabled={!canGoNext} onClick={() => setPage((prev) => prev + 1)}>Próxima</Button>
+          <div className="flex w-full flex-wrap gap-2 sm:w-auto sm:flex-nowrap">
+            <Button className="flex-1 sm:flex-none" variant="outline" disabled={page <= 1} onClick={() => setPage((prev) => prev - 1)}>Anterior</Button>
+            <span className="flex flex-1 items-center justify-center px-2 py-1 sm:flex-none">Página {page}</span>
+            <Button className="flex-1 sm:flex-none" variant="outline" disabled={!canGoNext} onClick={() => setPage((prev) => prev + 1)}>Próxima</Button>
           </div>
         </div>
       </Card>

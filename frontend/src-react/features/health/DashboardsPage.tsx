@@ -53,10 +53,25 @@ const EMPTY_BUCKET_FORM: AgeBucketForm = {
 };
 
 function HelpHint({ text }: { text: string }) {
+  const [isOpen, setIsOpen] = React.useState(false);
+
   return (
-    <span className="group relative inline-flex h-4 w-4 items-center justify-center rounded-full border border-gray-300 text-[10px] font-bold text-gray-500">
-      ?
-      <span className="pointer-events-none absolute left-6 top-1/2 z-20 hidden w-72 -translate-y-1/2 rounded-lg border border-gray-200 bg-white p-3 text-xs font-normal text-gray-700 shadow-lg group-hover:block">
+    <span
+      className="relative inline-flex"
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
+    >
+      <button
+        type="button"
+        className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-gray-300 text-[10px] font-bold text-gray-500"
+        onClick={() => setIsOpen((prev) => !prev)}
+        aria-label="Explicação"
+      >
+        ?
+      </button>
+      <span
+        className={`absolute left-0 top-6 z-20 w-[min(18rem,calc(100vw-2rem))] rounded-lg border border-gray-200 bg-white p-3 text-xs font-normal text-gray-700 shadow-lg ${isOpen ? 'block' : 'hidden'}`}
+      >
         {text}
       </span>
     </span>
@@ -275,11 +290,11 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
           <p className="text-gray-500">Cobertura por escola, ranking e distribuicao de pendencias por faixa etaria.</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" onClick={() => void exportCsv(false)}>
+          <Button variant="outline" className="w-full sm:w-auto" onClick={() => void exportCsv(false)}>
             <Download className="mr-2 h-4 w-4" />
             Exportar relatorio
           </Button>
-          <Button variant="outline" onClick={() => void exportCsv(true)}>
+          <Button variant="outline" className="w-full sm:w-auto" onClick={() => void exportCsv(true)}>
             <Download className="mr-2 h-4 w-4" />
             Exportar anonimizado
           </Button>
@@ -306,7 +321,7 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
           </Select>
           <Select
             label={
-              <span className="inline-flex items-center gap-1">
+              <span className="inline-flex items-center gap-1 whitespace-nowrap">
                 Status
                 <HelpHint text="Em dia: sem dose pendente para a idade atual. Pendente: ha dose liberada por idade que ainda nao foi registrada. Atrasado: ha dose pendente e o prazo maximo ja passou. Sem dados: nenhum registro vacinal." />
               </span>
@@ -328,7 +343,7 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
           </Select>
         </div>
 
-        <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
+        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
           <Input
             label="Idade minima (anos)"
             type="number"
@@ -393,7 +408,7 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle>Distribuicao de pendencias por faixa etaria</CardTitle>
             <HelpHint text="Em dia: estudantes sem dose pendente na idade atual. Pendentes: doses liberadas para a idade atual e ainda nao registradas. Atrasadas: doses pendentes com idade acima da faixa maxima recomendada." />
           </CardHeader>

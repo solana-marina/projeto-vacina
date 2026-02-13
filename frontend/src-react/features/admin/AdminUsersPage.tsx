@@ -98,7 +98,7 @@ export function AdminUsersPage() {
           <h1 className="text-2xl font-bold font-poppins text-gray-900">Usuários</h1>
           <p className="text-gray-500">Gerencie perfis e papéis de acesso.</p>
         </div>
-        <Button data-testid="admin-user-open-create" onClick={openCreate}>
+        <Button data-testid="admin-user-open-create" className="w-full sm:w-auto" onClick={openCreate}>
           <Plus className="mr-2 h-4 w-4" />
           Novo usuário
         </Button>

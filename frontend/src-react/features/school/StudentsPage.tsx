@@ -217,7 +217,7 @@ export function StudentsPage({ adminMode = false }: StudentsPageProps) {
               : 'Gerencie a situação vacinal dos estudantes da escola.'}
           </p>
         </div>
-        <Button data-testid="student-form-open" onClick={openCreateModal}>
+        <Button data-testid="student-form-open" className="w-full sm:w-auto" onClick={openCreateModal}>
           <Plus className="mr-2 h-4 w-4" />
           Novo estudante
         </Button>
@@ -290,14 +290,19 @@ export function StudentsPage({ adminMode = false }: StudentsPageProps) {
         {!loading && students.length === 0 ? <div className="p-8 text-center text-gray-500">Nenhum estudante encontrado.</div> : null}
       </Card>
 
-      <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-3">
+      <div className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-gray-500">Total: {total} estudantes</p>
-        <div className="flex gap-2">
-          <Button variant="outline" disabled={page <= 1} onClick={() => void loadStudents(page - 1)}>
+        <div className="flex w-full flex-wrap gap-2 sm:w-auto sm:flex-nowrap">
+          <Button variant="outline" className="flex-1 sm:flex-none" disabled={page <= 1} onClick={() => void loadStudents(page - 1)}>
             Anterior
           </Button>
-          <span className="flex items-center px-3 text-sm text-gray-600">Página {page}</span>
-          <Button variant="outline" disabled={page * PAGE_SIZE >= total} onClick={() => void loadStudents(page + 1)}>
+          <span className="flex flex-1 items-center justify-center px-3 text-sm text-gray-600 sm:flex-none">Página {page}</span>
+          <Button
+            variant="outline"
+            className="flex-1 sm:flex-none"
+            disabled={page * PAGE_SIZE >= total}
+            onClick={() => void loadStudents(page + 1)}
+          >
             Próxima
           </Button>
         </div>

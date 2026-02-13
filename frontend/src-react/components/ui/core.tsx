@@ -167,8 +167,8 @@ export function CardContent({ className, children }: { className?: string; child
 
 export function Table({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className="relative w-full overflow-auto rounded-lg border border-gray-200">
-      <table className={cn('w-full caption-bottom text-sm', className)}>{children}</table>
+    <div className="relative w-full overflow-x-auto rounded-lg border border-gray-200">
+      <table className={cn('min-w-[640px] w-full caption-bottom text-sm sm:min-w-full', className)}>{children}</table>
     </div>
   );
 }

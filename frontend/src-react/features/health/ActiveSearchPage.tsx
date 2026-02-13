@@ -144,15 +144,20 @@ export function ActiveSearchPage() {
           <h1 className="text-2xl font-bold font-poppins text-gray-900">Busca ativa nominal</h1>
           <p className="text-gray-500">Filtre por escola, vacina, status, sexo e faixa etária para apoiar a equipe de saúde.</p>
         </div>
-        <div className="flex gap-2">
-          <Button data-testid="health-open-dashboards" variant="outline" onClick={() => navigate('/health/dashboards')}>
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
+          <Button
+            data-testid="health-open-dashboards"
+            variant="outline"
+            className="w-full sm:w-auto"
+            onClick={() => navigate('/health/dashboards')}
+          >
             Ir para dashboards
           </Button>
-          <Button data-testid="health-export-csv" variant="outline" onClick={() => void exportCsv(false)}>
+          <Button data-testid="health-export-csv" variant="outline" className="w-full sm:w-auto" onClick={() => void exportCsv(false)}>
             <Download className="mr-2 h-4 w-4" />
             Exportar relatório
           </Button>
-          <Button variant="outline" onClick={() => void exportCsv(true)}>
+          <Button variant="outline" className="w-full sm:w-auto" onClick={() => void exportCsv(true)}>
             <Download className="mr-2 h-4 w-4" />
             Exportar anonimizado
           </Button>

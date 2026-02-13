@@ -34,18 +34,21 @@ export function Modal({ isOpen, onClose, title, children, footer, maxWidth = 'ma
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-      <div className={cn('w-full rounded-xl bg-white shadow-xl flex max-h-[92vh] flex-col', maxWidth)}>
-        <div className="flex items-center justify-between border-b p-4">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-2 backdrop-blur-sm sm:items-center sm:p-4" onClick={onClose}>
+      <div
+        className={cn('w-full rounded-xl bg-white shadow-xl flex max-h-[96dvh] flex-col sm:max-h-[92vh]', maxWidth)}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="flex items-center justify-between border-b px-4 py-3 sm:p-4">
           <h3 className="text-lg font-semibold font-poppins text-[#0B5D7A]">{title}</h3>
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
         </div>
 
-        <div className="overflow-y-auto p-6">{children}</div>
+        <div className="overflow-y-auto p-4 sm:p-6">{children}</div>
 
-        {footer ? <div className="flex justify-end gap-2 border-t bg-gray-50 p-4">{footer}</div> : null}
+        {footer ? <div className="flex flex-col-reverse gap-2 border-t bg-gray-50 p-4 sm:flex-row sm:justify-end">{footer}</div> : null}
       </div>
     </div>
   );

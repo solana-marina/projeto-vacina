@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import { Check, CircleHelp, Edit, Plus, Trash2 } from 'lucide-react';
+import { Check, Edit, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Modal } from '../../components/ui/modal';
@@ -28,6 +28,32 @@ const EMPTY_VACCINE = {
   code: '',
   name: '',
 };
+
+function HelpHint({ text }: { text: string }) {
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  return (
+    <span
+      className="relative inline-flex"
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
+    >
+      <button
+        type="button"
+        className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-gray-300 text-[10px] font-bold text-gray-500"
+        onClick={() => setIsOpen((prev) => !prev)}
+        aria-label="Ajuda sobre calendário ativo"
+      >
+        ?
+      </button>
+      <span
+        className={`absolute left-0 top-6 z-20 w-[min(18rem,calc(100vw-2rem))] rounded-lg border border-gray-200 bg-white p-3 text-xs font-normal text-gray-700 shadow-lg ${isOpen ? 'block' : 'hidden'}`}
+      >
+        {text}
+      </span>
+    </span>
+  );
+}
 
 export function AdminSchedulePage() {
   const [schedules, setSchedules] = React.useState<Schedule[]>([]);
@@ -247,7 +273,7 @@ export function AdminSchedulePage() {
           <h1 className="text-2xl font-bold font-poppins text-gray-900">Calendário vacinal</h1>
           <p className="text-gray-500">Gerencie versões, vacinas e regras por dose/faixa etária.</p>
         </div>
-        <Button data-testid="admin-schedule-open-create" onClick={openScheduleModal}>
+        <Button data-testid="admin-schedule-open-create" className="w-full sm:w-auto" onClick={openScheduleModal}>
           <Plus className="mr-2 h-4 w-4" />
           Nova versão
         </Button>
@@ -255,9 +281,9 @@ export function AdminSchedulePage() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle>Vacinas cadastradas</CardTitle>
-            <Button data-testid="admin-vaccine-open-create" size="sm" variant="outline" onClick={openCreateVaccineModal}>
+            <Button data-testid="admin-vaccine-open-create" size="sm" variant="outline" className="w-full sm:w-auto" onClick={openCreateVaccineModal}>
               <Plus className="mr-1 h-4 w-4" />
               Adicionar nova vacina
             </Button>
@@ -289,15 +315,10 @@ export function AdminSchedulePage() {
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
               <CardTitle>Versões de calendário</CardTitle>
-              <div className="group relative">
-                <CircleHelp className="h-4 w-4 text-gray-400" />
-                <div className="absolute left-6 top-0 z-20 hidden w-72 rounded-lg border border-gray-200 bg-white p-3 text-xs text-gray-600 shadow-lg group-hover:block">
-                  Sempre deve existir 1 calendário ativo. Para trocar, ative outra versão. O calendário ativo vigente não pode ficar sem substituto.
-                </div>
-              </div>
+              <HelpHint text="Sempre deve existir 1 calendário ativo. Para trocar, ative outra versão. O calendário ativo vigente não pode ficar sem substituto." />
             </div>
             <Badge status={schedules.some((item) => item.is_active) ? 'ACTIVE' : 'INACTIVE'} />
           </CardHeader>
@@ -336,8 +357,8 @@ export function AdminSchedulePage() {
       <Card>
         <CardHeader className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <CardTitle>Regras da versão selecionada</CardTitle>
-          <div className="flex gap-2">
-            <Select value={selectedScheduleId ?? ''} onChange={(event) => void onScheduleChange(event.target.value)}>
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+            <Select className="w-full sm:min-w-[260px]" value={selectedScheduleId ?? ''} onChange={(event) => void onScheduleChange(event.target.value)}>
               <option value="" disabled>
                 Selecione uma versão
               </option>
@@ -347,7 +368,7 @@ export function AdminSchedulePage() {
                 </option>
               ))}
             </Select>
-            <Button data-testid="admin-rule-open-create" onClick={openCreateRuleModal}>
+            <Button data-testid="admin-rule-open-create" className="w-full sm:w-auto" onClick={openCreateRuleModal}>
               <Plus className="mr-2 h-4 w-4" />
               Nova regra
             </Button>

@@ -77,7 +77,7 @@ export function AdminSchoolsPage() {
           <h1 className="text-2xl font-bold font-poppins text-gray-900">Gestão de escolas</h1>
           <p className="text-gray-500">Cadastre e mantenha as unidades escolares.</p>
         </div>
-        <Button data-testid="admin-school-open-create" onClick={openCreate}>
+        <Button data-testid="admin-school-open-create" className="w-full sm:w-auto" onClick={openCreate}>
           <Plus className="mr-2 h-4 w-4" />
           Nova escola
         </Button>

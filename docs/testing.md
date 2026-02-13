@@ -84,6 +84,111 @@ cd frontend
 npm run e2e
 ```
 
+### QA responsivo (mobile/tablet)
+Execução dedicada:
+```bash
+cd frontend
+npx playwright test e2e/mobile-friendly.spec.ts
+```
+
+Execução em modo visual (debug local):
+```bash
+cd frontend
+npx playwright test e2e/mobile-friendly.spec.ts --headed
+```
+
+Execução com depuração passo a passo:
+```bash
+cd frontend
+npx playwright test e2e/mobile-friendly.spec.ts --debug
+```
+
+Viewports cobertas:
+1. `360x800`
+2. `390x844`
+3. `768x1024`
+
+Checklist validado automaticamente por viewport:
+1. Login (`/auth/login`) sem overflow horizontal.
+2. Escola:
+- `students`, `pending`, `student detail`.
+- Modal de cadastro de estudante.
+- Modal de registro vacinal.
+3. Saude:
+- `search` e `dashboards`.
+- Modal de faixas etarias.
+4. Admin:
+- `students`, `schools`, `users`, `schedule`, `monitoring`.
+- Modais de escola, usuario e versao de calendario.
+5. Verificacao estrutural:
+- ausencia de overflow horizontal global.
+- modal dentro da viewport (largura/altura e posicionamento).
+
+Ultima execucao registrada: `2026-02-13 13:25:25`
+- Resultado: `12 passed`, `0 failed`.
+
+### Especificação detalhada do teste responsivo
+Arquivo:
+- `frontend/e2e/mobile-friendly.spec.ts`
+
+Entradas fixas usadas no teste:
+1. Perfis:
+- `operador.escola@vacina.local`
+- `saude@vacina.local`
+- `admin@vacina.local`
+2. Senhas:
+- `Escola@123`
+- `Saude@123`
+- `Admin@123`
+3. Viewports:
+- `360x800`
+- `390x844`
+- `768x1024`
+
+Saídas esperadas por ciclo (por viewport):
+1. Login:
+- tela renderiza sem overflow horizontal.
+2. Escola:
+- páginas `/school/students`, `/school/pending`, `/school/students/:id` renderizam sem overflow horizontal.
+- modal de cadastro de estudante abre e permanece dentro da viewport.
+- modal de registro vacinal abre e permanece dentro da viewport.
+3. Saúde:
+- páginas `/health/search` e `/health/dashboards` renderizam sem overflow horizontal.
+- modal de faixa etária abre e permanece dentro da viewport.
+4. Admin:
+- páginas `/admin/students`, `/admin/schools`, `/admin/users`, `/admin/schedule`, `/admin/monitoring` renderizam sem overflow horizontal.
+- modais de escola, usuário e versão de calendário abrem e permanecem dentro da viewport.
+
+Critérios técnicos validados automaticamente:
+1. Overflow horizontal:
+- cálculo: `document.documentElement.scrollWidth - window.innerWidth`.
+- aceitação: `<= 2px`.
+2. Modal dentro da viewport:
+- `x >= 0`
+- `y >= 0`
+- `width <= viewport.width + 1`
+- `height <= viewport.height + 1`
+
+### Evidências e diagnóstico do QA responsivo
+Onde ficam os artefatos do Playwright:
+- `frontend/test-results/`
+
+Como abrir trace de uma falha:
+```bash
+cd frontend
+npx playwright show-trace test-results/<pasta-da-falha>/trace.zip
+```
+
+Checklist de diagnóstico rápido (quando falhar):
+1. Falha em clique de item de menu no mobile:
+- confirmar se menu lateral está aberto antes do clique.
+2. Falha por overflow horizontal:
+- revisar componentes com `Table`, `CardHeader` com ações e barras de filtros.
+3. Falha por modal fora da tela:
+- revisar `max-h`, `overflow-y-auto`, `padding` e footer em coluna no mobile.
+4. Falha intermitente de carregamento:
+- verificar se backend foi semeado e se `seed_demo --reset` concluiu sem erro.
+
 ### Fluxos cobertos com entrada e saída esperada
 1. Escola
 - Entrada: login `operador.escola@vacina.local`.
