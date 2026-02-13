@@ -11,6 +11,6 @@ class SchoolAdmin(admin.ModelAdmin):
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'full_name', 'school', 'birth_date', 'class_group')
-    list_filter = ('school',)
+    list_display = ('id', 'full_name', 'school', 'birth_date', 'sex')
+    list_filter = ('school', 'sex')
     search_fields = ('full_name',)

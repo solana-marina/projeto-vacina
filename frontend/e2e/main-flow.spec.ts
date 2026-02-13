@@ -1,6 +1,6 @@
-import { expect, test } from '@playwright/test';
+﻿import { expect, test } from '@playwright/test';
 
-test('fluxo principal escola + saude + export CSV', async ({ page }) => {
+test('fluxo principal escola + saúde + export CSV', async ({ page }) => {
   const unique = Date.now();
   const studentName = `Aluno E2E ${unique}`;
 
@@ -10,7 +10,7 @@ test('fluxo principal escola + saude + export CSV', async ({ page }) => {
   await page.getByTestId('login-password').fill('Escola@123');
   await page.getByTestId('login-submit').click();
 
-  await expect(page).toHaveURL(/\/school/);
+  await expect(page).toHaveURL(/\/school\/students/);
 
   await page.getByTestId('student-form-open').click();
   await page.getByTestId('student-form-name').fill(studentName);
@@ -21,7 +21,7 @@ test('fluxo principal escola + saude + export CSV', async ({ page }) => {
   await page.getByTestId('students-filter-submit').click();
 
   await expect(page.getByText(studentName)).toBeVisible();
-  await page.locator('tr.mat-mdc-row', { hasText: studentName }).getByRole('button', { name: 'Detalhe' }).click();
+  await page.locator('tbody tr', { hasText: studentName }).getByRole('button', { name: 'Detalhe' }).click();
 
   await expect(page).toHaveURL(/\/school\/students\//);
   await page.getByTestId('vaccination-open-form').click();
@@ -46,24 +46,17 @@ test('fluxo principal escola + saude + export CSV', async ({ page }) => {
   await page.getByTestId('login-password').fill('Saude@123');
   await page.getByTestId('login-submit').click();
 
-  await expect(page).toHaveURL(/\/health/);
+  await expect(page).toHaveURL(/\/health\/search/);
   await page.getByTestId('health-search-name').fill(studentName);
   await page.getByTestId('health-search-submit').click();
 
-  const studentRows = page.locator('tr.mat-mdc-row');
-  let rowCount = await studentRows.count();
-  if (rowCount === 0) {
-    await page.getByTestId('health-search-name').fill('a');
-    await page.getByTestId('health-search-submit').click();
-    rowCount = await studentRows.count();
-  }
-  await expect(page.locator('table tr').nth(1)).toBeVisible();
+  await expect(page.locator('table tbody tr').first()).toBeVisible();
 
   await page.getByTestId('health-go-dashboards').click();
   await expect(page).toHaveURL(/\/health\/dashboards/);
-  await expect(page.getByText('Cobertura por escola')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Cobertura por escola' })).toBeVisible();
 
-  await page.goto('/health');
+  await page.goto('/health/search');
   const downloadPromise = page.waitForEvent('download');
   await page.getByTestId('health-export-csv').click();
   const download = await downloadPromise;

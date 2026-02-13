@@ -197,6 +197,13 @@ def _filter_students_for_export(request, students):
     status_filter = request.query_params.get('status')
     age_min = request.query_params.get('ageMin')
     age_max = request.query_params.get('ageMax')
+    sex = request.query_params.get('sex')
+
+    try:
+        age_min_value = int(age_min) if age_min is not None else None
+        age_max_value = int(age_max) if age_max is not None else None
+    except (TypeError, ValueError):
+        raise ValidationError({'detail': 'ageMin e ageMax devem ser números inteiros em meses.'})
 
     result = []
     for student in students:
@@ -206,9 +213,11 @@ def _filter_students_for_export(request, students):
             continue
 
         age_months = age_in_months_from_birth_date(student.birth_date)
-        if age_min and age_months < int(age_min):
+        if age_min_value is not None and age_months < age_min_value:
             continue
-        if age_max and age_months > int(age_max):
+        if age_max_value is not None and age_months > age_max_value:
+            continue
+        if sex and student.sex != sex:
             continue
 
         status_data = build_student_immunization_status(student)
@@ -218,6 +227,13 @@ def _filter_students_for_export(request, students):
         result.append((student, status_data))
 
     return result
+
+
+def _anonymize_name_to_initials(full_name: str):
+    parts = [chunk for chunk in (full_name or '').strip().split() if chunk]
+    if not parts:
+        return ''
+    return '.'.join(part[0].upper() for part in parts)
 
 
 class ExportStudentsPendingCsvView(APIView):
@@ -230,10 +246,11 @@ class ExportStudentsPendingCsvView(APIView):
 
         students = scope_students_for_user(user, Student.objects.select_related('school').all())
         rows = _filter_students_for_export(request, students)
+        anonymized = str(request.query_params.get('anonymized', 'false')).lower() == 'true'
 
         response = HttpResponse(content_type='text/csv; charset=utf-8')
         response['Content-Disposition'] = 'attachment; filename="students_pending.csv"'
-        writer = csv.writer(response)
+        writer = csv.writer(response, delimiter=';')
         writer.writerow(
             [
                 'student_id',
@@ -255,7 +272,7 @@ class ExportStudentsPendingCsvView(APIView):
                 writer.writerow(
                     [
                         student.id,
-                        student.full_name,
+                        _anonymize_name_to_initials(student.full_name) if anonymized else student.full_name,
                         student.school.name,
                         status_data['status'],
                         status_data['ageMonths'],

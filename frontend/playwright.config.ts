@@ -14,18 +14,18 @@ export default defineConfig({
   },
   webServer: [
     {
-      command: 'python manage.py runserver 8000',
+      command: 'cmd /c \"python manage.py migrate && python manage.py seed_demo --reset && python manage.py runserver 8000\"',
       cwd: '../backend',
       url: 'http://127.0.0.1:8000/api/docs/',
       timeout: 120_000,
-      reuseExistingServer: true,
+      reuseExistingServer: false,
     },
     {
       command: 'npm run start -- --host 127.0.0.1 --port 4200',
       cwd: '.',
       url: 'http://127.0.0.1:4200',
       timeout: 120_000,
-      reuseExistingServer: true,
+      reuseExistingServer: false,
     },
   ],
 });

@@ -42,28 +42,28 @@ class Command(BaseCommand):
         self._upsert_user(
             email='operador.escola@vacina.local',
             full_name='Operador Escola A',
-            role=User.RoleChoices.SCHOOL_OPERATOR,
+            role=User.RoleChoices.ESCOLA,
             password='Escola@123',
             school=school_a,
         )
         self._upsert_user(
             email='gestor.escola@vacina.local',
             full_name='Gestor Escola A',
-            role=User.RoleChoices.SCHOOL_MANAGER,
+            role=User.RoleChoices.ESCOLA,
             password='Escola@123',
             school=school_a,
         )
         self._upsert_user(
             email='saude@vacina.local',
             full_name='Profissional Saude',
-            role=User.RoleChoices.HEALTH_PRO,
+            role=User.RoleChoices.SAUDE,
             password='Saude@123',
             school=None,
         )
         self._upsert_user(
             email='gestor.saude@vacina.local',
             full_name='Gestor Saude',
-            role=User.RoleChoices.HEALTH_MANAGER,
+            role=User.RoleChoices.SAUDE,
             password='Saude@123',
             school=None,
         )
@@ -89,9 +89,9 @@ class Command(BaseCommand):
                 school=school,
                 full_name=faker.name(),
                 birth_date=birth_date,
+                sex=Student.SexChoices.FEMALE if idx % 2 == 0 else Student.SexChoices.MALE,
                 guardian_name=faker.name(),
                 guardian_contact=faker.phone_number()[:50],
-                class_group=f'Turma {(idx % 5) + 1}',
                 created_by=admin_user,
                 updated_by=admin_user,
             )

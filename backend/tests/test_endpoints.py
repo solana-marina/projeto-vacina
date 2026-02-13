@@ -30,7 +30,7 @@ def schedule_data():
 @pytest.mark.django_db
 def test_immunization_status_endpoint(api_client, schedule_data):
     school = SchoolFactory()
-    user = UserFactory(role=User.RoleChoices.SCHOOL_MANAGER, school=school)
+    user = UserFactory(role=User.RoleChoices.ESCOLA, school=school)
     student = StudentFactory(school=school, birth_date=timezone.localdate() - datetime.timedelta(days=30 * 14))
 
     api_client.force_authenticate(user=user)
@@ -45,14 +45,14 @@ def test_immunization_status_endpoint(api_client, schedule_data):
 @pytest.mark.django_db
 def test_dashboard_permissions(api_client, schedule_data):
     school = SchoolFactory()
-    school_operator = UserFactory(role=User.RoleChoices.SCHOOL_OPERATOR, school=school)
-    health_pro = UserFactory(role=User.RoleChoices.HEALTH_PRO, school=None)
+    school_user = UserFactory(role=User.RoleChoices.ESCOLA, school=school)
+    health_user = UserFactory(role=User.RoleChoices.SAUDE, school=None)
 
-    api_client.force_authenticate(user=school_operator)
-    forbidden_response = api_client.get('/api/dashboards/schools/ranking/')
-    assert forbidden_response.status_code == 403
+    api_client.force_authenticate(user=school_user)
+    allowed_for_school = api_client.get('/api/dashboards/schools/ranking/')
+    assert allowed_for_school.status_code == 403
 
-    api_client.force_authenticate(user=health_pro)
+    api_client.force_authenticate(user=health_user)
     allowed_response = api_client.get('/api/dashboards/schools/ranking/')
     assert allowed_response.status_code == 200
     assert 'items' in allowed_response.data
@@ -61,7 +61,7 @@ def test_dashboard_permissions(api_client, schedule_data):
 @pytest.mark.django_db
 def test_coverage_dashboard_returns_aggregated_data(api_client, schedule_data):
     school = SchoolFactory(name='Escola Cobertura')
-    user = UserFactory(role=User.RoleChoices.HEALTH_MANAGER, school=None)
+    user = UserFactory(role=User.RoleChoices.SAUDE, school=None)
 
     student = StudentFactory(school=school, birth_date=timezone.localdate() - datetime.timedelta(days=30 * 15))
     dtp = Vaccine.objects.get(code='DTP')

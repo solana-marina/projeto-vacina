@@ -1,7 +1,7 @@
 from accounts.models import User
 
-SCHOOL_ROLES = {User.RoleChoices.SCHOOL_OPERATOR, User.RoleChoices.SCHOOL_MANAGER}
-HEALTH_ROLES = {User.RoleChoices.HEALTH_PRO, User.RoleChoices.HEALTH_MANAGER}
+SCHOOL_ROLES = {User.RoleChoices.ESCOLA}
+HEALTH_ROLES = {User.RoleChoices.SAUDE}
 
 
 def is_admin(user):
@@ -21,15 +21,11 @@ def can_manage_school_data(user):
 
 
 def has_dashboard_school_access(user):
-    return is_admin(user) or user.role in {
-        User.RoleChoices.SCHOOL_MANAGER,
-        User.RoleChoices.HEALTH_PRO,
-        User.RoleChoices.HEALTH_MANAGER,
-    }
+    return is_admin(user) or user.role in {User.RoleChoices.ESCOLA, User.RoleChoices.SAUDE}
 
 
 def has_health_dashboard_access(user):
-    return is_admin(user) or user.role in {User.RoleChoices.HEALTH_PRO, User.RoleChoices.HEALTH_MANAGER}
+    return is_admin(user) or user.role == User.RoleChoices.SAUDE
 
 
 def can_access_school(user, school_id):

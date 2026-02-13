@@ -1,42 +1,36 @@
-﻿# LGPD no Projeto de Vacinação Contra o HPV (Resumo)
+﻿# LGPD e Privacidade (escopo do protótipo)
 
 ## Finalidade
-Tratamento de dados pessoais para monitoramento da vacinação contra o HPV de estudantes e apoio à busca ativa nominal em saúde.
+O tratamento de dados pessoais é realizado para gestão da vacinação contra o HPV em estudantes, incluindo:
+- registro vacinal nominal;
+- identificação de pendências e atrasos;
+- apoio à busca ativa e planejamento operacional.
 
-## Minimização de Dados
-- Coleta limitada ao necessário para execução da política vacinal:
-  - identificação do estudante;
-  - data de nascimento;
-  - vínculo escolar;
-  - registros vacinais;
-  - contato básico do responsável.
-- Não há ingestão automatizada de bases externas neste protótipo.
+## Minimização de dados
+O sistema coleta apenas dados necessários para a finalidade sanitária e educacional:
+- identificação do estudante e data de nascimento;
+- sexo (`F`/`M`, com `NI` apenas para legado);
+- responsável e contato;
+- histórico vacinal por dose.
 
-## Controle de Acesso
+## Controle de acesso
 - Autenticação por JWT.
-- Controle de perfis com RBAC.
-- Segregação por escola para perfis escolares.
-- Acesso consolidado para saúde e administração conforme atribuição funcional.
+- Autorização por perfil (`ADMIN`, `ESCOLA`, `SAUDE`).
+- Segregação por escola para usuários do perfil `ESCOLA`.
 
-## Rastreabilidade e Transparência
-- Trilhas de autoria e tempo (`created_by`, `updated_by`, `created_at`, `updated_at`).
-- `AuditLog` para alterações críticas de estudantes, registros vacinais e calendário.
-- API documentada em OpenAPI/Swagger.
+## Rastreabilidade e responsabilização
+- Campos de autoria (`created_by`, `updated_by`).
+- `AuditLog` para alterações críticas.
+- `ErrorLog` com `trace_id` para investigação técnica.
 
-## Retenção (Escopo do Protótipo)
-- Não há expurgo automático no ambiente de demonstração.
-- Para produção, recomenda-se:
-  - política formal de retenção;
-  - revisão periódica de necessidade;
-  - mecanismos de anonimização e exclusão quando cabíveis.
+## Retenção e descarte (diretriz simplificada)
+- Dados devem ser mantidos conforme política institucional e base legal aplicável.
+- O protótipo não implementa, nesta versão, automação de descarte/anonimização por prazo.
 
-## Segurança Básica Implementada
-- Token com expiração.
-- Segregação de acesso por contexto escolar.
-- Controle de permissões por papel.
+## Direitos do titular
+A operacionalização de direitos do titular deve ser conduzida pela instituição controladora, com fluxo formal de atendimento e registro.
 
-## Recomendações para Evolução
-- Comunicação obrigatória via TLS em todos os ambientes.
-- Política de rotação de segredos e credenciais.
-- Hardening de senha e autenticação reforçada.
-- Plano de backup e recuperação com testes periódicos.
+## Limites do protótipo
+- Não inclui integração com sistemas externos oficiais.
+- Não inclui módulo completo de consentimento, portal do titular ou DLP.
+- Não substitui avaliação jurídica formal de conformidade.

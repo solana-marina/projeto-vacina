@@ -15,6 +15,7 @@ class VaccineDoseRuleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = VaccineDoseRule
+        validators = []
         fields = [
             'id',
             'schedule_version',
@@ -29,10 +30,30 @@ class VaccineDoseRuleSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'updated_at', 'vaccine_name']
 
     def validate(self, attrs):
+        schedule_version = attrs.get('schedule_version', getattr(self.instance, 'schedule_version', None))
+        vaccine = attrs.get('vaccine', getattr(self.instance, 'vaccine', None))
+        dose_number = attrs.get('dose_number', getattr(self.instance, 'dose_number', None))
         min_age = attrs.get('recommended_min_age_months', getattr(self.instance, 'recommended_min_age_months', None))
         max_age = attrs.get('recommended_max_age_months', getattr(self.instance, 'recommended_max_age_months', None))
         if min_age is not None and max_age is not None and min_age > max_age:
             raise serializers.ValidationError('recommended_min_age_months nao pode ser maior que recommended_max_age_months.')
+
+        if schedule_version and vaccine and dose_number:
+            duplicate_qs = VaccineDoseRule.objects.filter(
+                schedule_version=schedule_version,
+                vaccine=vaccine,
+                dose_number=dose_number,
+            )
+            if self.instance:
+                duplicate_qs = duplicate_qs.exclude(pk=self.instance.pk)
+            if duplicate_qs.exists():
+                raise serializers.ValidationError(
+                    {
+                        'non_field_errors': [
+                            f'Ja existe regra para vacina {vaccine.code}, dose {dose_number}, na versao {schedule_version.code}. Edite a regra existente.'
+                        ]
+                    }
+                )
         return attrs
 
 
@@ -43,6 +64,16 @@ class VaccineScheduleVersionSerializer(serializers.ModelSerializer):
         model = VaccineScheduleVersion
         fields = ['id', 'code', 'name', 'is_active', 'created_at', 'rules_count']
         read_only_fields = ['id', 'created_at', 'rules_count']
+
+    def validate(self, attrs):
+        is_active = attrs.get('is_active')
+        if self.instance and is_active is False and self.instance.is_active:
+            has_another_active = VaccineScheduleVersion.objects.exclude(pk=self.instance.pk).filter(is_active=True).exists()
+            if not has_another_active:
+                raise serializers.ValidationError(
+                    {'is_active': 'Nao e permitido desativar o unico calendario ativo. Ative outra versao para trocar o calendario.'}
+                )
+        return attrs
 
 
 class VaccinationRecordSerializer(serializers.ModelSerializer):

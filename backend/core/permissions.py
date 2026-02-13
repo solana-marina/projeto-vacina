@@ -19,12 +19,6 @@ class StudentPermission(permissions.BasePermission):
         user = request.user
         if not user or not user.is_authenticated:
             return False
-        if user.role in {
-            User.RoleChoices.ADMIN,
-            User.RoleChoices.SCHOOL_OPERATOR,
-            User.RoleChoices.SCHOOL_MANAGER,
-            User.RoleChoices.HEALTH_PRO,
-            User.RoleChoices.HEALTH_MANAGER,
-        }:
+        if user.role in {User.RoleChoices.ADMIN, User.RoleChoices.ESCOLA, User.RoleChoices.SAUDE}:
             return True
         return False

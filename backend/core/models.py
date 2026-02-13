@@ -35,12 +35,17 @@ class School(AuditStampedModel):
 
 
 class Student(AuditStampedModel):
+    class SexChoices(models.TextChoices):
+        FEMALE = 'F', 'Feminino'
+        MALE = 'M', 'Masculino'
+        NOT_INFORMED = 'NI', 'Nao informado'
+
     school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='students')
     full_name = models.CharField(max_length=255)
     birth_date = models.DateField()
+    sex = models.CharField(max_length=2, choices=SexChoices.choices, default=SexChoices.NOT_INFORMED)
     guardian_name = models.CharField(max_length=255, blank=True)
     guardian_contact = models.CharField(max_length=100, blank=True)
-    class_group = models.CharField(max_length=100, blank=True)
 
     class Meta:
         ordering = ['full_name']

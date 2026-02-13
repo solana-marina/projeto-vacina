@@ -1,10 +1,10 @@
 ﻿# API do Projeto de Vacinação Contra o HPV
 
 ## Autenticação
-### Obter token
-`POST /api/auth/token/`
+- `POST /api/auth/token/`
+- `POST /api/auth/token/refresh/`
 
-Payload:
+### Exemplo
 ```json
 {
   "email": "admin@vacina.local",
@@ -12,53 +12,74 @@ Payload:
 }
 ```
 
-Resposta (resumo):
-```json
-{
-  "access": "...",
-  "refresh": "...",
-  "role": "ADMIN",
-  "school_id": null,
-  "full_name": "Admin Sistema",
-  "email": "admin@vacina.local",
-  "user_id": 1
-}
-```
+Resposta inclui `access`, `refresh`, `role`, `school_id`, `full_name`.
 
-### Renovar token
-`POST /api/auth/token/refresh/`
+## Documentação OpenAPI
+- Swagger: `/api/docs/`
+- Schema: `/api/schema/`
 
-### Header de autorização
-`Authorization: Bearer <access_token>`
-
-## Endpoints Principais
-- `GET/POST/PATCH/DELETE /api/users/` (admin)
+## Recursos principais
+### Administração
+- `GET/POST/PATCH/DELETE /api/users/`
 - `GET/POST/PATCH/DELETE /api/schools/`
-- `GET/POST/PATCH/DELETE /api/students/`
-- `GET /api/students/{id}/immunization-status/`
-- `GET/POST /api/students/{id}/vaccinations/`
-- `PATCH/DELETE /api/vaccinations/{recordId}/`
 - `GET/POST/PATCH/DELETE /api/vaccines/`
 - `GET/POST/PATCH/DELETE /api/schedules/`
 - `GET/POST /api/schedules/{id}/rules/`
 - `PATCH/DELETE /api/schedules/{id}/rules/{ruleId}/`
+
+### Estudantes e vacinação
+- `GET/POST /api/students/`
+- `GET/PATCH/DELETE /api/students/{id}/`
+- `GET /api/students/{id}/immunization-status/`
+- `GET/POST /api/students/{id}/vaccinations/`
+- `PATCH/DELETE /api/vaccinations/{id}/`
+
+Filtros suportados em estudantes:
+- `q`, `schoolId`, `status`, `ageMin`, `ageMax`, `sex`, `page`
+
+### Dashboards
 - `GET /api/dashboards/schools/coverage/`
 - `GET /api/dashboards/schools/ranking/`
 - `GET /api/dashboards/age-distribution/`
+
+Filtros suportados:
+- `q`, `schoolId`, `status`, `ageMin`, `ageMax`, `sex`
+
+### Preferências de dashboard
+- `GET /api/dashboards/preferences/age-buckets/`
+- `PUT /api/dashboards/preferences/age-buckets/`
+
+Payload de `PUT`:
+```json
+{
+  "ageBuckets": [
+    { "label": "0-11", "minMonths": 0, "maxMonths": 11 },
+    { "label": "12+", "minMonths": 12, "maxMonths": 999 }
+  ]
+}
+```
+
+### Governança e monitoramento
+- `GET /api/audit-logs/`
+- `GET /api/error-logs/`
+
+Filtros comuns:
+- `q`, `dateFrom`, `dateTo`, `page`
+
+Filtros específicos:
+- Auditoria: `action`, `entityType`, `actorId`
+- Erros: `statusCode`, `path`
+
+### Exportação
 - `GET /api/exports/students-pending.csv`
 
-## Exemplos de Consulta
-### Lista de estudantes com filtros
-`GET /api/students/?q=ana&status=ATRASADO&ageMin=108&ageMax=179&page=1`
+Filtros:
+- `q`, `schoolId`, `status`, `ageMin`, `ageMax`, `sex`, `anonymized`
 
-### Exportação CSV de pendências
-`GET /api/exports/students-pending.csv?schoolId=1&status=ATRASADO`
+Características:
+- Delimitador `;`
+- `anonymized=true` converte nome para iniciais.
 
-## Convenções Funcionais
-- O status vacinal é calculado com base na idade em meses e nas regras da versão ativa do calendário.
-- O escopo institucional de demonstração está focado em vacinação contra o HPV.
-- Perfis escolares têm acesso restrito à própria escola; saúde e administração possuem visão consolidada conforme permissões.
-
-## Swagger / OpenAPI
-- UI: `http://localhost:8000/api/docs/`
-- Schema: `http://localhost:8000/api/schema/`
+## Mensagens de erro
+- Erros incluem `trace_id` para correlação.
+- Duplicidade de regra vacinal retorna mensagem amigável indicando vacina, dose e versão.

@@ -7,10 +7,8 @@ from accounts.managers import UserManager
 class User(AbstractUser):
     class RoleChoices(models.TextChoices):
         ADMIN = 'ADMIN', 'Administrador'
-        SCHOOL_OPERATOR = 'SCHOOL_OPERATOR', 'Operador Escolar'
-        SCHOOL_MANAGER = 'SCHOOL_MANAGER', 'Gestor Escolar'
-        HEALTH_PRO = 'HEALTH_PRO', 'Profissional de Saude'
-        HEALTH_MANAGER = 'HEALTH_MANAGER', 'Gestor de Saude'
+        ESCOLA = 'ESCOLA', 'Escola'
+        SAUDE = 'SAUDE', 'Saude'
 
     username = None
     email = models.EmailField(unique=True)

@@ -13,7 +13,7 @@ def test_school_user_cannot_access_other_school_student(api_client):
     school_a = SchoolFactory(name='Escola A')
     school_b = SchoolFactory(name='Escola B')
 
-    user_school = UserFactory(role=User.RoleChoices.SCHOOL_OPERATOR, school=school_a)
+    user_school = UserFactory(role=User.RoleChoices.ESCOLA, school=school_a)
     student_b = StudentFactory(school=school_b)
 
     api_client.force_authenticate(user=user_school)
@@ -27,7 +27,7 @@ def test_school_user_cannot_create_student_in_other_school(api_client):
     school_a = SchoolFactory(name='Escola A')
     school_b = SchoolFactory(name='Escola B')
 
-    user_school = UserFactory(role=User.RoleChoices.SCHOOL_OPERATOR, school=school_a)
+    user_school = UserFactory(role=User.RoleChoices.ESCOLA, school=school_a)
 
     api_client.force_authenticate(user=user_school)
     response = api_client.post(
@@ -36,6 +36,7 @@ def test_school_user_cannot_create_student_in_other_school(api_client):
             'school': school_b.id,
             'full_name': 'Aluno Invalido',
             'birth_date': str(timezone.localdate() - datetime.timedelta(days=365)),
+            'sex': 'F',
         },
         format='json',
     )
@@ -46,7 +47,7 @@ def test_school_user_cannot_create_student_in_other_school(api_client):
 @pytest.mark.django_db
 def test_health_user_can_access_any_school_student(api_client):
     school_b = SchoolFactory(name='Escola B')
-    user_health = UserFactory(role=User.RoleChoices.HEALTH_PRO, school=None)
+    user_health = UserFactory(role=User.RoleChoices.SAUDE, school=None)
     student_b = StudentFactory(school=school_b)
 
     api_client.force_authenticate(user=user_health)

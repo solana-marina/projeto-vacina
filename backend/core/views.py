@@ -1,6 +1,6 @@
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.response import Response
 
 from accounts.permissions import is_school_user
@@ -41,6 +41,7 @@ class StudentViewSet(viewsets.ModelViewSet):
         status_filter = self.request.query_params.get('status')
         age_min = self.request.query_params.get('ageMin')
         age_max = self.request.query_params.get('ageMax')
+        sex_filter = self.request.query_params.get('sex')
 
         if q:
             students = [student for student in students if q.lower() in student.full_name.lower()]
@@ -50,14 +51,22 @@ class StudentViewSet(viewsets.ModelViewSet):
                 return [], {}
             students = [student for student in students if str(student.school_id) == str(school_id)]
 
+        try:
+            age_min_value = int(age_min) if age_min is not None else None
+            age_max_value = int(age_max) if age_max is not None else None
+        except (TypeError, ValueError):
+            raise ValidationError({'detail': 'ageMin e ageMax devem ser números inteiros em meses.'})
+
         status_cache = {}
         filtered_students = []
 
         for student in students:
             age_months = age_in_months_from_birth_date(student.birth_date)
-            if age_min and age_months < int(age_min):
+            if age_min_value is not None and age_months < age_min_value:
                 continue
-            if age_max and age_months > int(age_max):
+            if age_max_value is not None and age_months > age_max_value:
+                continue
+            if sex_filter and student.sex != sex_filter:
                 continue
 
             status_data = build_student_immunization_status(student)

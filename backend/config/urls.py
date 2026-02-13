@@ -6,7 +6,13 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 from accounts.token import CustomTokenObtainPairView
 from accounts.views import UserViewSet
-from analytics_app.views import AgeDistributionDashboardView, SchoolCoverageDashboardView, SchoolRankingDashboardView
+from analytics_app.views import (
+    AgeDistributionDashboardView,
+    DashboardAgeBucketsPreferenceView,
+    SchoolCoverageDashboardView,
+    SchoolRankingDashboardView,
+)
+from audit.views import AuditLogViewSet, ErrorLogViewSet
 from core.views import SchoolViewSet, StudentViewSet
 from immunization.views import (
     ExportStudentsPendingCsvView,
@@ -26,6 +32,8 @@ router.register(r'vaccinations', VaccinationRecordViewSet, basename='vaccination
 router.register(r'vaccines', VaccineViewSet, basename='vaccines')
 router.register(r'schedules', VaccineScheduleVersionViewSet, basename='schedules')
 router.register(r'schedule-rules', VaccineDoseRuleViewSet, basename='schedule-rules')
+router.register(r'audit-logs', AuditLogViewSet, basename='audit-logs')
+router.register(r'error-logs', ErrorLogViewSet, basename='error-logs')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -39,5 +47,6 @@ urlpatterns = [
     path('api/dashboards/schools/coverage/', SchoolCoverageDashboardView.as_view(), name='dashboard-school-coverage'),
     path('api/dashboards/schools/ranking/', SchoolRankingDashboardView.as_view(), name='dashboard-school-ranking'),
     path('api/dashboards/age-distribution/', AgeDistributionDashboardView.as_view(), name='dashboard-age-distribution'),
+    path('api/dashboards/preferences/age-buckets/', DashboardAgeBucketsPreferenceView.as_view(), name='dashboard-age-buckets-preferences'),
     path('api/exports/students-pending.csv', ExportStudentsPendingCsvView.as_view(), name='export-students-pending'),
 ]

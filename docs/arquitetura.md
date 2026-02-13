@@ -1,64 +1,58 @@
 ﻿# Arquitetura do Projeto de Vacinação Contra o HPV
 
-## Visão de Arquitetura
-Solução web em duas camadas:
-- API REST em Django/DRF com autenticação JWT, RBAC e segregação por escola.
-- SPA Angular modular com lazy loading por perfil funcional.
+## Visão Geral
+A solução é composta por:
+- Backend em Django + DRF (API REST).
+- Frontend web em React (Vite), modularizado por domínio.
+- Persistência em PostgreSQL.
 
-O desenho prioriza operação real de nível 3: processos digitalizados, regras padronizadas, dados consolidados e governança mínima.
+O desenho prioriza maturidade digital nível 3: processos padronizados, operação orientada a dados e governança mínima.
 
-## Backend (Django)
-### App `accounts`
-- Usuário customizado (`email` como login).
-- Perfis: `ADMIN`, `SCHOOL_OPERATOR`, `SCHOOL_MANAGER`, `HEALTH_PRO`, `HEALTH_MANAGER`.
-- Emissão de JWT com metadados de perfil e escola.
+## Backend
+### Apps
+- `accounts`: usuário customizado, autenticação JWT, perfis e permissões.
+- `core`: escolas e estudantes.
+- `immunization`: vacinas, calendário, regras, registros vacinais e motor de status.
+- `analytics_app`: dashboards e preferências de faixas etárias por usuário.
+- `audit`: auditoria de ações críticas e logs de erro.
 
-### App `core`
-- Entidades: `School`, `Student`.
-- Endpoints de escolas e estudantes.
-- Ação de status vacinal: `GET /api/students/{id}/immunization-status/`.
+### Regras de domínio
+- Perfis finais: `ADMIN`, `ESCOLA`, `SAUDE`.
+- Estudante sem `turma`; com campo `sex` (`F`, `M`, `NI` legado).
+- Novos cadastros exigem `F` ou `M`.
+- Sempre deve existir um calendário ativo.
+- Regra de dose única por (`schedule_version`, `vaccine`, `dose_number`).
 
-### App `immunization`
-- Entidades: `Vaccine`, `VaccineScheduleVersion`, `VaccineDoseRule`, `VaccinationRecord`.
-- Motor de regras por dose/faixa etária (idade em meses).
-- Exportação CSV de pendências: `GET /api/exports/students-pending.csv`.
-- Comando de demonstração: `python manage.py seed_demo`.
+### Segurança e governança
+- JWT para autenticação.
+- RBAC por perfil.
+- Segregação por escola para perfil `ESCOLA`.
+- `AuditLog` para trilha de ações críticas.
+- `ErrorLog` para erros operacionais com `trace_id`.
 
-### App `analytics_app`
-- Dashboards consolidados:
-  - cobertura por escola;
-  - ranking de atraso/sem dados;
-  - distribuição de pendências por faixa etária.
+## Frontend
+### Estrutura
+- `src-react/context`: sessão/autenticação.
+- `src-react/components`: layout, rotas protegidas e UI base.
+- `src-react/features/auth`: login.
+- `src-react/features/school`: estudantes, detalhe vacinal e pendências.
+- `src-react/features/health`: busca ativa e dashboards.
+- `src-react/features/admin`: escolas, usuários, calendário, monitoramento.
+- `legacy/frontend-angular/`: frontend Angular legado (fora da execução atual).
 
-### App `audit`
-- Entidade `AuditLog` para trilha de eventos críticos.
+### Navegação por perfil
+- `ADMIN`: estudantes, escolas, usuários, calendário, dashboards, auditoria/logs.
+- `ESCOLA`: estudantes e pendências da própria escola.
+- `SAUDE`: busca ativa e dashboards consolidados.
 
-## Frontend (Angular)
-### Módulos lazy por feature
-- `features/auth`: login.
-- `features/school`: estudantes, detalhe vacinal e pendências.
-- `features/health`: busca ativa nominal, dashboards e exportação.
-- `features/admin`: escolas, usuários, vacinas e calendário vacinal HPV.
+## Fluxos principais
+1. Usuário autentica e recebe token JWT com perfil e vínculo.
+2. Escola registra estudante e histórico vacinal.
+3. Backend calcula status vacinal pelo calendário ativo.
+4. Saúde filtra população nominal e prioriza pendências.
+5. Administração acompanha indicadores, auditoria e falhas.
 
-### Núcleo de segurança e sessão
-- `core/services/auth.ts`: sessão e token.
-- `core/guards/auth-guard.ts`: proteção por autenticação.
-- `core/guards/role-guard.ts`: autorização por perfil.
-- `core/interceptors/jwt-interceptor.ts`: anexo do token Bearer.
-- `core/interceptors/error-interceptor.ts`: tratamento uniforme de erros.
-
-## Fluxo Principal (Ponta a Ponta)
-1. Usuário autentica e recebe token JWT com perfil/escola.
-2. Escola registra estudantes e doses aplicadas.
-3. API calcula situação vacinal com base no calendário ativo.
-4. Saúde executa busca ativa com filtros nominais.
-5. Gestão usa dashboards e exportações para priorização de ação.
-
-## Segregação e Governança
-- Perfis escolares enxergam apenas a própria escola.
-- Perfis de saúde e administração possuem visão consolidada conforme RBAC.
-- Alterações críticas geram trilha de auditoria.
-
-## Foco Funcional em HPV
-- Interface, fluxos e documentação orientados para monitoramento da vacinação contra o HPV.
-- Catálogo e regras permitem expansão, mas a demonstração institucional é centrada no HPV.
+## Observações arquiteturais
+- Backend mantém idade em meses para regras e cálculo.
+- Frontend apresenta idade em anos + meses para melhor usabilidade.
+- Faixas etárias de dashboard são persistidas por usuário.

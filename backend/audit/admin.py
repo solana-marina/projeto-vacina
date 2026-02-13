@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from audit.models import AuditLog
+from audit.models import AuditLog, ErrorLog
 
 
 @admin.register(AuditLog)
@@ -8,3 +8,10 @@ class AuditLogAdmin(admin.ModelAdmin):
     list_display = ('id', 'timestamp', 'actor', 'action', 'entity_type', 'entity_id')
     list_filter = ('action', 'entity_type')
     search_fields = ('entity_id', 'action', 'entity_type', 'actor__email')
+
+
+@admin.register(ErrorLog)
+class ErrorLogAdmin(admin.ModelAdmin):
+    list_display = ('id', 'timestamp', 'status_code', 'method', 'path', 'actor', 'trace_id')
+    list_filter = ('status_code', 'method')
+    search_fields = ('path', 'message', 'trace_id', 'actor__email')

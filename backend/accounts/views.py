@@ -10,6 +10,6 @@ class IsAdminUserRole(permissions.BasePermission):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.select_related('school').all().order_by('id')
+    queryset = User.objects.select_related('school').all().order_by('-id')
     serializer_class = UserSerializer
     permission_classes = [IsAdminUserRole]

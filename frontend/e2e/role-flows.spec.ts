@@ -1,4 +1,4 @@
-import { expect, Page, test } from '@playwright/test';
+﻿import { expect, Page, test } from '@playwright/test';
 
 async function login(page: Page, email: string, password: string) {
   await page.goto('/auth/login');
@@ -7,7 +7,7 @@ async function login(page: Page, email: string, password: string) {
   await page.getByTestId('login-submit').click();
 }
 
-test('fluxo admin: escolas, usuarios e calendario', async ({ page }) => {
+test('fluxo admin: escolas, usuários, calendário, estudantes, dashboards e monitoramento', async ({ page }) => {
   const unique = Date.now();
   const schoolName = `Escola Admin ${unique}`;
   const userEmail = `admin.flow.${unique}@vacina.local`;
@@ -15,8 +15,9 @@ test('fluxo admin: escolas, usuarios e calendario', async ({ page }) => {
   const scheduleCode = `SCHED_ADMIN_${unique}`;
 
   await login(page, 'admin@vacina.local', 'Admin@123');
-  await expect(page).toHaveURL(/\/admin/);
+  await expect(page).toHaveURL(/\/admin\/students/);
 
+  await page.goto('/admin/schools');
   await page.getByTestId('admin-school-open-create').click();
   await page.getByTestId('admin-school-name').fill(schoolName);
   await page.getByTestId('admin-school-save').click();
@@ -27,6 +28,7 @@ test('fluxo admin: escolas, usuarios e calendario', async ({ page }) => {
   await page.getByTestId('admin-user-open-create').click();
   await page.getByTestId('admin-user-email').fill(userEmail);
   await page.getByTestId('admin-user-full-name').fill('Usuario Admin Flow');
+  await page.getByTestId('admin-user-password').fill('Admin@123');
   await page.getByTestId('admin-user-save').click();
   await expect(page.getByText(userEmail)).toBeVisible();
 
@@ -47,30 +49,41 @@ test('fluxo admin: escolas, usuarios e calendario', async ({ page }) => {
 
   await page.getByTestId('admin-rule-open-create').click();
   await page.getByTestId('admin-rule-dose-number').fill('99');
-  await page.getByTestId('admin-rule-min-age').fill('108');
-  await page.getByTestId('admin-rule-max-age').fill('179');
+  await page.getByTestId('admin-rule-min-years').fill('9');
+  await page.getByTestId('admin-rule-min-months').fill('0');
+  await page.getByTestId('admin-rule-max-years').fill('14');
+  await page.getByTestId('admin-rule-max-months').fill('11');
   await page.getByTestId('admin-rule-save').click();
   await expect(page.getByText('Regras da versão selecionada')).toBeVisible();
+  await page.keyboard.press('Escape');
+
+  await page.getByTestId('admin-nav-dashboards').click();
+  await expect(page).toHaveURL(/\/admin\/dashboards/);
+  await expect(page.getByRole('heading', { name: 'Cobertura por escola' })).toBeVisible();
+
+  await page.getByTestId('admin-nav-monitoring').click();
+  await expect(page).toHaveURL(/\/admin\/monitoring/);
+  await expect(page.getByRole('heading', { name: 'Auditoria e logs' })).toBeVisible();
 });
 
-test('fluxo gestor escolar: pendencias e filtros', async ({ page }) => {
+test('fluxo escola: pendências e filtros', async ({ page }) => {
   await login(page, 'gestor.escola@vacina.local', 'Escola@123');
-  await expect(page).toHaveURL(/\/school/);
+  await expect(page).toHaveURL(/\/school\/students/);
 
   await page.getByTestId('school-go-pending').click();
   await expect(page).toHaveURL(/\/school\/pending/);
-  await expect(page.getByText('Pendências da Escola')).toBeVisible();
+  await expect(page.getByText('Pendências da escola')).toBeVisible();
 
   await page.getByRole('button', { name: 'Atualizar lista' }).click();
   await expect(page.locator('table')).toBeVisible();
 });
 
-test('fluxo gestor de saude: dashboards consolidados', async ({ page }) => {
+test('fluxo saúde: dashboards consolidados', async ({ page }) => {
   await login(page, 'gestor.saude@vacina.local', 'Saude@123');
-  await expect(page).toHaveURL(/\/health/);
+  await expect(page).toHaveURL(/\/health\/search/);
 
   await page.getByTestId('health-go-dashboards').click();
   await expect(page).toHaveURL(/\/health\/dashboards/);
-  await expect(page.getByText('Cobertura por escola')).toBeVisible();
-  await expect(page.getByText('Distribuição de pendências por faixa etária')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Cobertura por escola' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Distribuição de pendências por faixa etária' })).toBeVisible();
 });

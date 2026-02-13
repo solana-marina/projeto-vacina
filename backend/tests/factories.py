@@ -23,7 +23,7 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     email = factory.Sequence(lambda n: f'user{n}@test.local')
     full_name = factory.Faker('name')
-    role = User.RoleChoices.HEALTH_PRO
+    role = User.RoleChoices.SAUDE
     is_active = True
 
     @factory.post_generation
@@ -41,6 +41,7 @@ class StudentFactory(factory.django.DjangoModelFactory):
     school = factory.SubFactory(SchoolFactory)
     full_name = factory.Faker('name')
     birth_date = factory.LazyFunction(lambda: timezone.localdate() - datetime.timedelta(days=365 * 2))
+    sex = Student.SexChoices.FEMALE
 
 
 class VaccineFactory(factory.django.DjangoModelFactory):
