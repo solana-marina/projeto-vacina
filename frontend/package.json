@@ -12,6 +12,7 @@
     "test:watch": "vitest",
     "test:unit": "vitest run --coverage",
     "e2e": "playwright test",
+    "e2e:screenshots": "playwright test e2e/screenshots-catalog.spec.ts --workers=1",
     "e2e:headed": "playwright test --headed"
   },
   "dependencies": {

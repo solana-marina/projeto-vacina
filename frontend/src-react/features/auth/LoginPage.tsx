@@ -6,14 +6,6 @@ import { toast } from 'sonner';
 import { useAuth } from '../../context/AuthContext';
 import { Button, Card, CardContent, CardHeader, CardTitle, Input } from '../../components/ui/core';
 
-const DEMO_USERS = [
-  { label: 'ADMIN', email: 'admin@vacina.local', password: 'Admin@123' },
-  { label: 'ESCOLA (Operador)', email: 'operador.escola@vacina.local', password: 'Escola@123' },
-  { label: 'ESCOLA (Gestor)', email: 'gestor.escola@vacina.local', password: 'Escola@123' },
-  { label: 'SAÚDE (Profissional)', email: 'saude@vacina.local', password: 'Saude@123' },
-  { label: 'SAÚDE (Gestor)', email: 'gestor.saude@vacina.local', password: 'Saude@123' },
-];
-
 export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -39,11 +31,6 @@ export function LoginPage() {
     } catch {
       toast.error('Credenciais inválidas. Verifique e tente novamente.');
     }
-  };
-
-  const fillDemo = (demoEmail: string, demoPassword: string) => {
-    setEmail(demoEmail);
-    setPassword(demoPassword);
   };
 
   return (
@@ -118,26 +105,6 @@ export function LoginPage() {
                 Entrar
               </Button>
             </form>
-
-            <div className="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Credenciais demo</p>
-              <div className="mt-3 space-y-2 text-xs text-gray-700">
-                {DEMO_USERS.map((user) => (
-                  <button
-                    key={user.label}
-                    type="button"
-                    className="w-full text-left rounded-md border border-gray-200 bg-white px-3 py-2 hover:border-[#0B5D7A]/40"
-                    onClick={() => fillDemo(user.email, user.password)}
-                  >
-                    <span className="font-semibold">{user.label}</span>: {user.email} / {user.password}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <a className="mt-4 inline-block text-xs text-[#0B5D7A] hover:underline" href="/api/docs/" target="_blank" rel="noreferrer">
-              Abrir documentação da API (Swagger)
-            </a>
           </CardContent>
         </Card>
       </div>

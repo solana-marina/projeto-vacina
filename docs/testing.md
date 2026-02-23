@@ -84,6 +84,18 @@ cd frontend
 npm run e2e
 ```
 
+### Catalogo de telas e modais (desktop 1440x900)
+Execucao dedicada:
+```bash
+cd frontend
+npm run e2e:screenshots
+```
+
+Saida esperada:
+1. Capturas PNG geradas na pasta raiz `telas/`.
+2. Arquivos com nomenclatura fixa de `01-login.png` ate `43-admin-monitoring-error-detail-modal.png`.
+3. Execucao valida quando todos os arquivos existem e possuem tamanho maior que zero.
+
 ### QA responsivo (mobile/tablet)
 Execução dedicada:
 ```bash

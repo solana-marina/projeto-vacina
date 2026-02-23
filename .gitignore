@@ -1,5 +1,7 @@
 legacy/
 test-result/
+telas/
+telas.zip
 
 # Python
 __pycache__/
