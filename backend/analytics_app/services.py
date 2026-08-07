@@ -79,12 +79,12 @@ def build_coverage_by_school(students, vaccine_id=None):
                 'EM_DIA': 0,
                 'ATRASADO': 0,
                 'INCOMPLETO': 0,
-                'SEM_DADOS': 0,
             }
 
         school_entry = by_school[school_name]
         school_entry['totalStudents'] += 1
-        school_entry[status_data['status']] += 1
+        if status_data['status'] in school_entry:
+            school_entry[status_data['status']] += 1
 
     for item in by_school.values():
         total = item['totalStudents'] or 1
@@ -98,9 +98,8 @@ def build_ranking(students, vaccine_id=None):
     for item in coverage:
         total = item['totalStudents'] or 1
         item['delayPercent'] = round((item['ATRASADO'] / total) * 100, 2)
-        item['noDataPercent'] = round((item['SEM_DADOS'] / total) * 100, 2)
 
-    return sorted(coverage, key=lambda x: (x['delayPercent'], x['noDataPercent']), reverse=True)
+    return sorted(coverage, key=lambda x: x['delayPercent'], reverse=True)
 
 
 def build_pending_age_distribution(students, age_buckets=None, vaccine_id=None):
@@ -123,11 +122,11 @@ def build_pending_age_distribution(students, age_buckets=None, vaccine_id=None):
 
         if status_data['status'] == 'EM_DIA':
             distribution[label]['upToDateCount'] += 1
-
-        for pending in status_data['pending']:
+        elif status_data['status'] == 'ATRASADO':
+            distribution[label]['overdueCount'] += 1
+        else:
+            # INCOMPLETO (pendente): conta estudante, não dose.
             distribution[label]['pendingCount'] += 1
-            if pending['status'] == 'ATRASADA':
-                distribution[label]['overdueCount'] += 1
 
     return list(distribution.values())
 

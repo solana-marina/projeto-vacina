@@ -87,7 +87,8 @@ class VaccinationRecordViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        qs = self.queryset
+        # Clone base queryset to avoid stale cached results between requests.
+        qs = self.queryset.all()
         if is_admin(user) or is_health_user(user):
             return qs
         if is_school_user(user):

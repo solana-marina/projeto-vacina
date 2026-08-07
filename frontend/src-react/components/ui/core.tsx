@@ -75,7 +75,7 @@ export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElemen
 export function Select({ label, className, children, ...props }: SelectProps) {
   return (
     <div className="w-full space-y-1.5">
-      {label ? <label className="text-sm font-medium text-gray-700">{label}</label> : null}
+      {label ? <div className="text-sm font-medium text-gray-700">{label}</div> : null}
       <select
         className={cn(
           'flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0B5D7A]',
@@ -112,7 +112,6 @@ const BADGE_STYLES: Record<string, string> = {
   EM_DIA: 'bg-[#2A9D8F]/15 text-[#2A9D8F] border-[#2A9D8F]/20',
   ATRASADO: 'bg-[#E76F51]/15 text-[#E76F51] border-[#E76F51]/20',
   INCOMPLETO: 'bg-[#F4A261]/15 text-[#F4A261] border-[#F4A261]/20',
-  SEM_DADOS: 'bg-gray-100 text-gray-600 border-gray-200',
   PENDENTE: 'bg-yellow-100 text-yellow-700 border-yellow-200',
   ATRASADA: 'bg-[#E76F51]/15 text-[#E76F51] border-[#E76F51]/20',
   ACTIVE: 'bg-green-100 text-green-700 border-green-200',
@@ -123,7 +122,6 @@ const BADGE_LABELS: Record<string, string> = {
   EM_DIA: 'EM DIA',
   ATRASADO: 'ATRASADO',
   INCOMPLETO: 'PENDENTE',
-  SEM_DADOS: 'SEM DADOS',
   PENDENTE: 'PENDENTE',
   ATRASADA: 'ATRASADA',
   ACTIVE: 'ATIVO',
@@ -132,7 +130,7 @@ const BADGE_LABELS: Record<string, string> = {
 
 export function Badge({ status, className }: { status: string; className?: string }) {
   const normalized = status.toUpperCase().replace(' ', '_');
-  const style = BADGE_STYLES[normalized] ?? BADGE_STYLES.SEM_DADOS;
+  const style = BADGE_STYLES[normalized] ?? BADGE_STYLES.INCOMPLETO;
   const label = BADGE_LABELS[normalized] ?? status.replace(/_/g, ' ');
   return (
     <span className={cn('inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold', style, className)}>

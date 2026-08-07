@@ -60,9 +60,7 @@ def build_student_immunization_status(student, schedule_version=None, vaccine_id
                 }
             )
 
-    if len(records) == 0:
-        status = 'SEM_DADOS'
-    elif not pending_items:
+    if not pending_items:
         status = 'EM_DIA'
     elif any(item['status'] == 'ATRASADA' for item in pending_items):
         status = 'ATRASADO'

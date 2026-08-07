@@ -14,7 +14,8 @@ def age_in_months_from_birth_date(birth_date):
 
 
 def scope_students_for_user(user, queryset: QuerySet | None = None) -> QuerySet:
-    qs = queryset if queryset is not None else Student.objects.all()
+    # Always clone queryset to avoid stale cached results between requests.
+    qs = (queryset if queryset is not None else Student.objects.all()).all()
     if is_admin(user) or is_health_user(user):
         return qs
     if is_school_user(user):

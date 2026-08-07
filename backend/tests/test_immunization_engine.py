@@ -44,7 +44,7 @@ def base_schedule():
 
 
 @pytest.mark.django_db
-def test_status_sem_dados_e_atraso(base_schedule):
+def test_status_sem_registros_e_atrasado(base_schedule):
     school = SchoolFactory()
     student = Student.objects.create(
         school=school,
@@ -53,7 +53,7 @@ def test_status_sem_dados_e_atraso(base_schedule):
     )
 
     result = build_student_immunization_status(student)
-    assert result['status'] == 'SEM_DADOS'
+    assert result['status'] == 'ATRASADO'
     assert any(item['status'] == 'ATRASADA' for item in result['pending'])
 
 

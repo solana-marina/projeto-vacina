@@ -102,6 +102,12 @@ def test_auth_token_and_refresh_endpoints(api_client, api_setup):
     assert 'access' in token_response.data
     assert 'refresh' in token_response.data
     assert token_response.data['role'] == User.RoleChoices.ADMIN
+    assert AuditLog.objects.filter(
+        actor=api_setup['admin'],
+        action='user_login',
+        entity_type='User',
+        entity_id=str(api_setup['admin'].id),
+    ).exists()
 
     refresh_response = api_client.post(
         '/api/auth/token/refresh/',
@@ -146,6 +152,9 @@ def test_students_scoping_sex_and_fields(api_client, api_setup):
     returned_ids = {row['id'] for row in list_response.data['results']}
     assert student_a.id in returned_ids
     assert student_b.id not in returned_ids
+    assert list_response.data['status_summary']['EM_DIA'] >= 0
+    assert list_response.data['status_summary']['ATRASADO'] >= 0
+    assert list_response.data['status_summary']['INCOMPLETO'] >= 0
     assert 'sex' in list_response.data['results'][0]
     assert 'class_group' not in list_response.data['results'][0]
 
@@ -172,6 +181,32 @@ def test_students_scoping_sex_and_fields(api_client, api_setup):
         format='json',
     )
     assert create_own_school.status_code == 201
+
+
+@pytest.mark.django_db
+def test_admin_students_list_reflects_cross_profile_updates(api_client, api_setup):
+    student_a = api_setup['student_a']
+    original_name = student_a.full_name
+    updated_name = f'{original_name} Atualizada'
+
+    api_client.force_authenticate(user=api_setup['admin'])
+    first_list = api_client.get('/api/students/')
+    assert first_list.status_code == 200
+
+    api_client.force_authenticate(user=api_setup['school_user'])
+    update_response = api_client.patch(
+        f'/api/students/{student_a.id}/',
+        {'full_name': updated_name},
+        format='json',
+    )
+    assert update_response.status_code == 200
+
+    api_client.force_authenticate(user=api_setup['admin'])
+    second_list = api_client.get('/api/students/')
+    assert second_list.status_code == 200
+    updated_item = next((row for row in second_list.data['results'] if row['id'] == student_a.id), None)
+    assert updated_item is not None
+    assert updated_item['full_name'] == updated_name
 
 
 @pytest.mark.django_db
@@ -221,6 +256,19 @@ def test_dashboard_permissions_and_filters(api_client, api_setup):
     age_distribution_allowed = api_client.get(f"/api/dashboards/age-distribution/?sex=F&vaccineId={api_setup['vaccine_hpv'].id}")
     assert age_distribution_allowed.status_code == 200
     assert 'items' in age_distribution_allowed.data
+
+
+@pytest.mark.django_db
+def test_age_distribution_counts_students_not_doses(api_client, api_setup):
+    api_client.force_authenticate(user=api_setup['health_user'])
+    response = api_client.get('/api/dashboards/age-distribution/')
+    assert response.status_code == 200
+
+    total_from_buckets = sum(
+        item['upToDateCount'] + item['pendingCount'] + item['overdueCount']
+        for item in response.data['items']
+    )
+    assert total_from_buckets == 2
 
 
 @pytest.mark.django_db

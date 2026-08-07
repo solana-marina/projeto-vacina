@@ -24,7 +24,7 @@ export function PendingPage() {
         schoolId: session?.schoolId ?? undefined,
       });
       const pendingOnly = response.results.filter((student) =>
-        ['ATRASADO', 'SEM_DADOS', 'INCOMPLETO'].includes(student.current_status),
+        ['ATRASADO', 'INCOMPLETO'].includes(student.current_status),
       );
       setStudents(pendingOnly);
     } catch (error) {
@@ -39,14 +39,14 @@ export function PendingPage() {
   }, [load]);
 
   const atrasados = students.filter((student) => student.current_status === 'ATRASADO').length;
-  const semDados = students.filter((student) => student.current_status === 'SEM_DADOS').length;
+  const pendentes = students.filter((student) => student.current_status === 'INCOMPLETO').length;
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold font-poppins text-gray-900">Pendências da escola</h1>
-          <p className="text-gray-500">Acompanhe estudantes atrasados, incompletos ou sem dados.</p>
+          <p className="text-gray-500">Acompanhe estudantes atrasados ou pendentes.</p>
         </div>
         <Button variant="outline" className="w-full sm:w-auto" onClick={() => void load()}>
           <RefreshCw className="mr-2 h-4 w-4" />
@@ -69,8 +69,8 @@ export function PendingPage() {
             <AlertCircle className="h-5 w-5 text-yellow-700" />
           </div>
           <div>
-            <p className="text-sm text-yellow-700 font-medium">Sem dados</p>
-            <p className="text-2xl font-bold text-yellow-800">{semDados}</p>
+            <p className="text-sm text-yellow-700 font-medium">Pendentes</p>
+            <p className="text-2xl font-bold text-yellow-800">{pendentes}</p>
           </div>
         </Card>
       </div>

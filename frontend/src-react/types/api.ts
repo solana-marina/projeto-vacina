@@ -23,6 +23,13 @@ export interface PaginatedResponse<T> {
   next: string | null;
   previous: string | null;
   results: T[];
+  status_summary?: StudentStatusSummary;
+}
+
+export interface StudentStatusSummary {
+  EM_DIA: number;
+  ATRASADO: number;
+  INCOMPLETO: number;
 }
 
 export interface School {
@@ -43,7 +50,7 @@ export interface Student {
   guardian_name: string;
   guardian_contact: string;
   age_months: number;
-  current_status: 'EM_DIA' | 'ATRASADO' | 'INCOMPLETO' | 'SEM_DADOS';
+  current_status: 'EM_DIA' | 'ATRASADO' | 'INCOMPLETO';
 }
 
 export interface ImmunizationPending {
@@ -69,7 +76,7 @@ export interface ImmunizationStatus {
   studentId: number;
   studentName: string;
   ageMonths: number;
-  status: 'EM_DIA' | 'ATRASADO' | 'INCOMPLETO' | 'SEM_DADOS';
+  status: 'EM_DIA' | 'ATRASADO' | 'INCOMPLETO';
   asOfDate: string;
   activeScheduleCode: string | null;
   pending: ImmunizationPending[];
@@ -127,10 +134,8 @@ export interface CoverageItem {
   EM_DIA: number;
   ATRASADO: number;
   INCOMPLETO: number;
-  SEM_DADOS: number;
   coveragePercent: number;
   delayPercent?: number;
-  noDataPercent?: number;
 }
 
 export interface AgeDistributionItem {

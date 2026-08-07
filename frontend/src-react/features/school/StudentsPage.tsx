@@ -11,7 +11,7 @@ import { formatAgeMonths, monthsFromYearsMonths } from '../../lib/age';
 import { parseApiError } from '../../lib/errors';
 import { formatSex } from '../../lib/sex';
 import { api } from '../../services/api';
-import { School, Student, Vaccine } from '../../types/api';
+import { School, Student, StudentStatusSummary, Vaccine } from '../../types/api';
 
 const PAGE_SIZE = 10;
 
@@ -36,11 +36,17 @@ function StatCard({ title, value, icon: Icon, color }: { title: string; value: s
 export function StudentsPage({ adminMode = false }: StudentsPageProps) {
   const navigate = useNavigate();
   const { session } = useAuth();
+  const latestLoadRequestRef = React.useRef(0);
 
   const [students, setStudents] = React.useState<Student[]>([]);
   const [schools, setSchools] = React.useState<School[]>([]);
   const [vaccines, setVaccines] = React.useState<Vaccine[]>([]);
   const [total, setTotal] = React.useState(0);
+  const [statusSummary, setStatusSummary] = React.useState<StudentStatusSummary>({
+    EM_DIA: 0,
+    ATRASADO: 0,
+    INCOMPLETO: 0,
+  });
   const [loading, setLoading] = React.useState(false);
   const [page, setPage] = React.useState(1);
 
@@ -95,6 +101,7 @@ export function StudentsPage({ adminMode = false }: StudentsPageProps) {
 
   const loadStudents = React.useCallback(
     async (requestedPage = 1) => {
+      const requestId = ++latestLoadRequestRef.current;
       setLoading(true);
       try {
         const ageMin = monthsFromYearsMonths(ageMinYears, ageMinMonths);
@@ -110,13 +117,28 @@ export function StudentsPage({ adminMode = false }: StudentsPageProps) {
           ageMin,
           ageMax,
         });
+        if (requestId !== latestLoadRequestRef.current) {
+          return;
+        }
         setStudents(response.results);
         setTotal(response.count);
+        setStatusSummary(
+          response.status_summary ?? {
+            EM_DIA: response.results.filter((student) => student.current_status === 'EM_DIA').length,
+            ATRASADO: response.results.filter((student) => student.current_status === 'ATRASADO').length,
+            INCOMPLETO: response.results.filter((student) => student.current_status === 'INCOMPLETO').length,
+          },
+        );
         setPage(requestedPage);
       } catch (error) {
+        if (requestId !== latestLoadRequestRef.current) {
+          return;
+        }
         toast.error(parseApiError(error, 'Não foi possível carregar estudantes.'));
       } finally {
-        setLoading(false);
+        if (requestId === latestLoadRequestRef.current) {
+          setLoading(false);
+        }
       }
     },
     [ageMaxMonths, ageMaxYears, ageMinMonths, ageMinYears, effectiveSchoolId, query, sexFilter, status, vaccineId],
@@ -187,22 +209,23 @@ export function StudentsPage({ adminMode = false }: StudentsPageProps) {
 
     try {
       if (editing) {
-        await api.updateStudent(editing.id, payload);
+        const updatedStudent = await api.updateStudent(editing.id, payload);
+        setStudents((current) => current.map((student) => (student.id === updatedStudent.id ? updatedStudent : student)));
         toast.success('Estudante atualizado com sucesso.');
       } else {
         await api.createStudent(payload);
         toast.success('Estudante criado com sucesso.');
       }
       setIsModalOpen(false);
-      await loadStudents(1);
+      await loadStudents(page);
     } catch (error) {
       toast.error(parseApiError(error, 'Não foi possível salvar o estudante.'));
     }
   };
 
-  const emDia = students.filter((student) => student.current_status === 'EM_DIA').length;
-  const atrasado = students.filter((student) => student.current_status === 'ATRASADO').length;
-  const semDados = students.filter((student) => student.current_status === 'SEM_DADOS').length;
+  const emDia = statusSummary.EM_DIA;
+  const atrasado = statusSummary.ATRASADO;
+  const pendente = statusSummary.INCOMPLETO;
 
   const basePath = adminMode ? '/admin/students' : '/school/students';
 
@@ -227,7 +250,7 @@ export function StudentsPage({ adminMode = false }: StudentsPageProps) {
         <StatCard title="Total de estudantes" value={String(total)} icon={Users} color="#0B5D7A" />
         <StatCard title="Em dia" value={String(emDia)} icon={CheckCircle} color="#2A9D8F" />
         <StatCard title="Atrasado" value={String(atrasado)} icon={AlertCircle} color="#E76F51" />
-        <StatCard title="Sem dados" value={String(semDados)} icon={Clock} color="#F4A261" />
+        <StatCard title="Pendentes" value={String(pendente)} icon={Clock} color="#F4A261" />
       </div>
 
       <StudentFiltersPanel

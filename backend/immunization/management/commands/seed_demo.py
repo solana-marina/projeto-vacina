@@ -101,7 +101,7 @@ class Command(BaseCommand):
             profile = idx % 4
             self._seed_student_records(student, schedule, admin_user, profile)
 
-        status_totals = {'EM_DIA': 0, 'ATRASADO': 0, 'INCOMPLETO': 0, 'SEM_DADOS': 0}
+        status_totals = {'EM_DIA': 0, 'ATRASADO': 0, 'INCOMPLETO': 0}
         for student in students:
             status = build_student_immunization_status(student)['status']
             status_totals[status] += 1

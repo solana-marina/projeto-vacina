@@ -82,16 +82,37 @@ class StudentViewSet(viewsets.ModelViewSet):
 
         return filtered_students, status_cache
 
+    def _build_status_summary(self, filtered_students, status_cache):
+        summary = {
+            'EM_DIA': 0,
+            'ATRASADO': 0,
+            'INCOMPLETO': 0,
+        }
+        for student in filtered_students:
+            status = status_cache.get(student.id, {}).get('status')
+            if status in summary:
+                summary[status] += 1
+        return summary
+
     def list(self, request, *args, **kwargs):
         students = list(self.get_queryset())
         filtered_students, status_cache = self._apply_filters(students)
+        status_summary = self._build_status_summary(filtered_students, status_cache)
         page = self.paginate_queryset(filtered_students)
         if page is not None:
             serializer = self.get_serializer(page, many=True, context={'request': request, 'status_cache': status_cache})
-            return self.get_paginated_response(serializer.data)
+            response = self.get_paginated_response(serializer.data)
+            response.data['status_summary'] = status_summary
+            return response
 
         serializer = self.get_serializer(filtered_students, many=True, context={'request': request, 'status_cache': status_cache})
-        return Response(serializer.data)
+        return Response(
+            {
+                'count': len(filtered_students),
+                'results': serializer.data,
+                'status_summary': status_summary,
+            }
+        )
 
     def perform_create(self, serializer):
         school = serializer.validated_data.get('school')

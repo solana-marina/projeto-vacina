@@ -56,21 +56,24 @@ function HelpHint({ text }: { text: string }) {
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
-    <span
-      className="relative inline-flex"
-      onMouseEnter={() => setIsOpen(true)}
-      onMouseLeave={() => setIsOpen(false)}
-    >
+    <span className="relative inline-flex items-center" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
       <button
         type="button"
-        className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-gray-300 text-[10px] font-bold text-gray-500"
-        onClick={() => setIsOpen((prev) => !prev)}
+        className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-gray-300 text-[11px] font-bold text-gray-600 hover:bg-gray-50"
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          setIsOpen((prev) => !prev);
+        }}
+        onBlur={() => setIsOpen(false)}
         aria-label="Explicação"
+        aria-expanded={isOpen}
       >
         ?
       </button>
       <span
-        className={`absolute left-0 top-6 z-20 w-[min(18rem,calc(100vw-2rem))] rounded-lg border border-gray-200 bg-white p-3 text-xs font-normal text-gray-700 shadow-lg ${isOpen ? 'block' : 'hidden'}`}
+        role="tooltip"
+        className={`absolute left-0 top-full mt-2 z-[70] w-72 max-w-[calc(100vw-2rem)] whitespace-normal break-words rounded-lg border border-gray-200 bg-white p-3 text-left text-xs font-normal leading-relaxed text-gray-700 shadow-lg ${isOpen ? 'block' : 'hidden'}`}
       >
         {text}
       </span>
@@ -173,7 +176,7 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
         setAgeBuckets(bucketsData);
         setVaccines(vaccineItems);
       } catch (error) {
-        toast.error(parseApiError(error, 'Nao foi possivel carregar metadados do dashboard.'));
+        toast.error(parseApiError(error, 'Não foi possível carregar metadados do dashboard.'));
       }
     })();
   }, []);
@@ -191,6 +194,10 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
     pendentes: item.pendingCount,
     atrasadas: item.overdueCount,
   }));
+  const coverageChartData = ranking.map((item) => ({
+    escola: item.schoolName,
+    cobertura: item.coveragePercent,
+  }));
 
   const exportCsv = async (anonymized = false) => {
     try {
@@ -203,7 +210,7 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
       anchor.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      toast.error(parseApiError(error, 'Falha ao exportar relatorio.'));
+      toast.error(parseApiError(error, 'Falha ao exportar relatório.'));
     }
   };
 
@@ -229,7 +236,7 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
 
   const saveBucket = () => {
     if (!bucketForm.label.trim()) {
-      toast.error('Informe um rotulo para a faixa etaria.');
+      toast.error('Informe um rótulo para a faixa etária.');
       return;
     }
     if (!monthInputIsValid(bucketForm.minMonths) || !monthInputIsValid(bucketForm.maxMonths)) {
@@ -239,7 +246,7 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
 
     const parsedBucket = formToBucket(bucketForm);
     if (!parsedBucket || parsedBucket.maxMonths < parsedBucket.minMonths) {
-      toast.error('Faixa etaria invalida. A idade maxima deve ser maior ou igual a minima.');
+      toast.error('Faixa etária inválida. A idade máxima deve ser maior ou igual à mínima.');
       return;
     }
 
@@ -253,7 +260,7 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
 
     for (let i = 1; i < updated.length; i += 1) {
       if (updated[i].minMonths <= updated[i - 1].maxMonths) {
-        toast.error('As faixas etarias nao podem se sobrepor.');
+        toast.error('As faixas etárias não podem se sobrepor.');
         return;
       }
     }
@@ -269,16 +276,16 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
 
   const saveBucketPreferences = async () => {
     if (ageBuckets.length === 0) {
-      toast.error('Cadastre ao menos uma faixa etaria.');
+      toast.error('Cadastre ao menos uma faixa etária.');
       return;
     }
     try {
       const saved = await api.updateAgeBucketsPreference(ageBuckets);
       setAgeBuckets(saved);
-      toast.success('Faixas etarias salvas.');
+      toast.success('Faixas etárias salvas.');
       await load();
     } catch (error) {
-      toast.error(parseApiError(error, 'Nao foi possivel salvar faixas etarias.'));
+      toast.error(parseApiError(error, 'Não foi possível salvar faixas etárias.'));
     }
   };
 
@@ -286,13 +293,13 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold font-poppins text-gray-900">{adminMode ? 'Painel administrativo' : 'Painel de saude'}</h1>
-          <p className="text-gray-500">Cobertura por escola, ranking e distribuicao de pendencias por faixa etaria.</p>
+          <h1 className="text-2xl font-bold font-poppins text-gray-900">{adminMode ? 'Painel administrativo' : 'Painel de saúde'}</h1>
+          <p className="text-gray-500">Cobertura por escola, ranking e distribuição de pendências por faixa etária.</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" className="w-full sm:w-auto" onClick={() => void exportCsv(false)}>
             <Download className="mr-2 h-4 w-4" />
-            Exportar relatorio
+            Exportar relatório
           </Button>
           <Button variant="outline" className="w-full sm:w-auto" onClick={() => void exportCsv(true)}>
             <Download className="mr-2 h-4 w-4" />
@@ -323,7 +330,7 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
             label={
               <span className="inline-flex items-center gap-1 whitespace-nowrap">
                 Status
-                <HelpHint text="Em dia: sem dose pendente para a idade atual. Pendente: ha dose liberada por idade que ainda nao foi registrada. Atrasado: ha dose pendente e o prazo maximo ja passou. Sem dados: nenhum registro vacinal." />
+                <HelpHint text="Em dia: sem dose pendente para a idade atual. Pendente: há dose liberada por idade que ainda não foi registrada. Atrasado: há dose pendente e o prazo máximo já passou." />
               </span>
             }
             value={filters.status}
@@ -333,26 +340,25 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
             <option value="EM_DIA">Em dia</option>
             <option value="ATRASADO">Atrasado</option>
             <option value="INCOMPLETO">Pendente</option>
-            <option value="SEM_DADOS">Sem dados</option>
           </Select>
           <Select label="Sexo" value={filters.sex} onChange={(event) => setFilters((prev) => ({ ...prev, sex: event.target.value }))}>
             <option value="">Todos</option>
             <option value="F">Feminino</option>
             <option value="M">Masculino</option>
-            <option value="NI">Nao informado</option>
+            <option value="NI">Não informado</option>
           </Select>
         </div>
 
         <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
           <Input
-            label="Idade minima (anos)"
+            label="Idade mínima (anos)"
             type="number"
             min={0}
             value={filters.ageMinYears}
             onChange={(event) => setFilters((prev) => ({ ...prev, ageMinYears: event.target.value }))}
           />
           <Input
-            label="Idade minima (meses)"
+            label="Idade mínima (meses)"
             type="number"
             min={0}
             max={11}
@@ -360,14 +366,14 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
             onChange={(event) => setFilters((prev) => ({ ...prev, ageMinMonths: event.target.value }))}
           />
           <Input
-            label="Idade maxima (anos)"
+            label="Idade máxima (anos)"
             type="number"
             min={0}
             value={filters.ageMaxYears}
             onChange={(event) => setFilters((prev) => ({ ...prev, ageMaxYears: event.target.value }))}
           />
           <Input
-            label="Idade maxima (meses)"
+            label="Idade máxima (meses)"
             type="number"
             min={0}
             max={11}
@@ -384,8 +390,8 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <Card className="p-6">
           <div className="flex items-center gap-1">
-            <p className="text-sm font-medium text-gray-500">Cobertura media</p>
-            <HelpHint text="Percentual medio de estudantes em dia no recorte filtrado." />
+            <p className="text-sm font-medium text-gray-500">Cobertura média</p>
+            <HelpHint text="Percentual médio de estudantes em dia no recorte filtrado." />
           </div>
           <h3 className="mt-2 text-3xl font-bold text-[#0B5D7A]">{averageCoverage.toFixed(1)}%</h3>
         </Card>
@@ -395,8 +401,8 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
         </Card>
         <Card className="p-6">
           <div className="flex items-center gap-1">
-            <p className="text-sm font-medium text-gray-500">Pendencias totais</p>
-            <HelpHint text="Soma de estudantes com status Pendente e Atrasado. Nao inclui Sem dados." />
+            <p className="text-sm font-medium text-gray-500">Pendências totais</p>
+            <HelpHint text="Soma de estudantes com status pendente e atrasado." />
           </div>
           <h3 className="mt-2 text-3xl font-bold text-[#E76F51]">{totalPending}</h3>
         </Card>
@@ -409,21 +415,22 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <CardTitle>Distribuicao de pendencias por faixa etaria</CardTitle>
-            <HelpHint text="Em dia: estudantes sem dose pendente na idade atual. Pendentes: doses liberadas para a idade atual e ainda nao registradas. Atrasadas: doses pendentes com idade acima da faixa maxima recomendada." />
+            <CardTitle>Distribuição de estudantes por faixa etária e status</CardTitle>
+            <HelpHint text="Cada estudante é contado uma única vez, no status atual. Em dia: sem dose pendente na idade atual. Pendentes: com dose liberada por idade ainda não registrada. Atrasados: com dose pendente e prazo máximo já ultrapassado." />
           </CardHeader>
-          <CardContent>
-            <div className="h-[320px] w-full">
+          <CardContent className="pt-2">
+            <p className="mb-3 text-xs text-gray-500">Eixo Y: quantidade de estudantes.</p>
+            <div className="h-[320px] w-full overflow-hidden">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData}>
+                <BarChart data={chartData} margin={{ top: 8, right: 12, left: 8, bottom: 8 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
                   <XAxis dataKey="faixa" tick={{ fontSize: 11 }} />
-                  <YAxis tick={{ fontSize: 11 }} />
+                  <YAxis tick={{ fontSize: 11 }} width={44} allowDecimals={false} />
                   <Tooltip />
                   <Legend />
                   <Bar dataKey="emDia" name="Em dia" fill="#0B5D7A" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="pendentes" fill="#F4A261" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="atrasadas" fill="#E76F51" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="pendentes" name="Pendentes" fill="#F4A261" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="atrasadas" name="Atrasados" fill="#E76F51" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -435,6 +442,18 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
             <CardTitle>Cobertura por escola</CardTitle>
           </CardHeader>
           <CardContent>
+            <p className="mb-3 text-xs text-gray-500">No gráfico abaixo, o eixo Y está em percentual (%).</p>
+            <div className="mb-5 h-[260px] w-full overflow-hidden">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={coverageChartData} margin={{ top: 8, right: 12, left: 8, bottom: 8 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis dataKey="escola" tick={{ fontSize: 11 }} />
+                  <YAxis domain={[0, 100]} width={48} tickFormatter={(value) => `${value}%`} tick={{ fontSize: 11 }} />
+                  <Tooltip formatter={(value) => `${Number(value).toFixed(1)}%`} />
+                  <Bar dataKey="cobertura" name="Cobertura (%)" fill="#0B5D7A" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
             <Table>
               <TableHeader>
                 <TableRow>
@@ -475,11 +494,11 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
 
       <Card>
         <CardHeader className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <CardTitle>Faixas etarias configuradas</CardTitle>
+          <CardTitle>Faixas etárias configuradas</CardTitle>
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" onClick={openCreateBucket}>
               <Plus className="mr-2 h-4 w-4" />
-              Nova faixa etaria
+              Nova faixa etária
             </Button>
             <Button variant="outline" onClick={() => void saveBucketPreferences()}>
               <Edit className="mr-2 h-4 w-4" />
@@ -491,11 +510,11 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Rotulo</TableHead>
-                <TableHead>Minimo</TableHead>
-                <TableHead>Maximo</TableHead>
+                <TableHead>Rótulo</TableHead>
+                <TableHead>Mínimo</TableHead>
+                <TableHead>Máximo</TableHead>
                 <TableHead>Faixa</TableHead>
-                <TableHead className="text-right">Acoes</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <tbody>
@@ -527,7 +546,7 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
       <Modal
         isOpen={isBucketModalOpen}
         onClose={() => setIsBucketModalOpen(false)}
-        title={editingBucketIndex === null ? 'Nova faixa etaria' : 'Editar faixa etaria'}
+        title={editingBucketIndex === null ? 'Nova faixa etária' : 'Editar faixa etária'}
         footer={
           <>
             <Button variant="ghost" onClick={() => setIsBucketModalOpen(false)}>
@@ -538,17 +557,17 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
         }
       >
         <div className="grid gap-4">
-          <Input label="Rotulo" value={bucketForm.label} onChange={(event) => setBucketForm((prev) => ({ ...prev, label: event.target.value }))} />
+          <Input label="Rótulo" value={bucketForm.label} onChange={(event) => setBucketForm((prev) => ({ ...prev, label: event.target.value }))} />
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Input
-              label="Minimo (anos)"
+              label="Mínimo (anos)"
               type="number"
               min={0}
               value={bucketForm.minYears}
               onChange={(event) => setBucketForm((prev) => ({ ...prev, minYears: event.target.value }))}
             />
             <Input
-              label="Minimo (meses)"
+              label="Mínimo (meses)"
               type="number"
               min={0}
               max={11}
@@ -558,14 +577,14 @@ export function DashboardsPage({ adminMode = false }: DashboardsPageProps) {
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Input
-              label="Maximo (anos)"
+              label="Máximo (anos)"
               type="number"
               min={0}
               value={bucketForm.maxYears}
               onChange={(event) => setBucketForm((prev) => ({ ...prev, maxYears: event.target.value }))}
             />
             <Input
-              label="Maximo (meses)"
+              label="Máximo (meses)"
               type="number"
               min={0}
               max={11}
